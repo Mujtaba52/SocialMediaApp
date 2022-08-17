@@ -3,6 +3,9 @@ import {Request,Response} from 'express'
 import { User } from '../models/user';
 import bcrypt from "bcrypt"
 import boom, { Boom } from "@hapi/boom"
+import { any, string } from 'joi';
+import { Types } from 'mongoose';
+import { Post } from '../models/post';
 
 
 const signUp = async (userAttributes:any)=>{
@@ -41,40 +44,29 @@ const signOutAll = ()=>{
         return []
 }
 
-const followUser = async (currentUser:any,UserToFollow:String)=>{
+const followUnfollowUser = async (currentUser:any,UserToFollowUnfollow:String)=>{
 
-    console.log(currentUser)
-    
-    const user = await User.findById(UserToFollow)
-    if(!user)
+    const user = await User.findById(UserToFollowUnfollow)
+    if(!user) throw boom.notFound("User Not found");
+    if(user._id===currentUser._id) throw boom.notFound("You cannot follow yourself");        
+    if(currentUser.following.includes(user._id) )
     {
-        throw boom.notFound("User Not found");
+        currentUser.following= currentUser.following.filter((id:any)=>{id!==user._id})
+        user.followers = user.followers?.filter((id:any)=>{id!==currentUser._id})
+        console.log("------User Unfollowed!------")
     }
-    console.log(user)
-    user.followers?.unshift(currentUser._id)
+    else{
+        user.followers?.unshift(currentUser._id)
+        currentUser.following.unshift(UserToFollowUnfollow)
+        console.log("------User followed!------")
+    }
     await user.save();
-    currentUser.following.unshift(UserToFollow)
     return currentUser
 
 }
 const likePost = async (req:Request,res:Response)=>{
-    try{
-
-    }
-    catch{
-        
-    }
+    
 }
 
-const sharePost = async(req:Request,res:Response)=>{
-    try{
-
-    }
-    catch{
-        
-    }
-}
-
-
-export {signUp,SignIn,signOut,likePost,sharePost,signOutAll,followUser}
+export {signUp,SignIn,signOut,likePost,signOutAll,followUnfollowUser}
 

@@ -1,6 +1,6 @@
 import * as express from "express";
 import {User} from "../models/user"
-import { signUp,signIn,signOut,signOutAll,userFeed,followUser } from "../controllers/user";
+import { signUp,signIn,signOut,signOutAll,userFeed,followUnfollowUser } from "../controllers/user";
 import {SignInValidator,SignUpValidator} from "../validations/userValidations"
 import {auth} from "../middleware/auth"
 const router = express.Router();
@@ -14,7 +14,8 @@ router.post('/signOut',auth,signOut)
 
 router.post('/signOutAll',auth,signOutAll)
 
-router.post('/follow/:id',auth,followUser)
+//edit this one ..add unfollow in this one
+router.post('/followUnfollowUser/:id',auth,followUnfollowUser)
 
 router.get('/userFeed',auth,userFeed)
 export {router}

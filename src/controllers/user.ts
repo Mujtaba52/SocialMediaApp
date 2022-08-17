@@ -49,15 +49,14 @@ const signOutAll = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     }
 }
 
-const followUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+const followUnfollowUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     try{
-        const user= await userlib.followUser(req.user,req.params.id)
+        const user= await userlib.followUnfollowUser(req.user,req.params.id)
         const updateduser =await user.save()
         res.status(200).send(updateduser)
     }
     catch(e:any){
-        res.status(e.output.statusCode|| 400).send({Error:e.message})
-        
+        res.status(e.output?.statusCode|| 400).send({Error:e.message} )
     }
 }
 
@@ -79,15 +78,5 @@ const likePost = async (req:Request,res:Response)=>{
     }
 }
 
-const sharePost = async(req:Request,res:Response)=>{
-    try{
 
-    }
-    catch{
-        
-    }
-}
-
-
-
-export {signUp,signIn,signOut,signOutAll,userFeed,followUser}
+export {signUp,signIn,signOut,signOutAll,userFeed,followUnfollowUser}

@@ -1,3 +1,4 @@
+import { time, timeStamp } from "console";
 import mongoose, {Schema,model,Types} from "mongoose";
 
 
@@ -6,6 +7,7 @@ interface IPost {
     description: string;
     likes: [];
     postedBy: Types.ObjectId;
+    sharedBy: String;
   }
 
 const postSchema = new Schema({
@@ -22,7 +24,12 @@ const postSchema = new Schema({
         type:mongoose.Types.ObjectId,
         required:true,
         ref:'user'
-    }
+    },
+    sharedBy:[{
+            type:mongoose.Types.ObjectId,
+            required:true,
+            ref:'user'        
+    }]
 },{
     timestamps:true
 })

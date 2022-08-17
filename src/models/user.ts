@@ -8,8 +8,8 @@ interface IUser {
     name: string;
     email: string;
     password: string;
-    following?:[Types.ObjectId];
-    followers?:[Types.ObjectId];
+    following?:Types.ObjectId[];
+    followers?:Types.ObjectId[];
     tokens?:string;
     generateWebToken?:any;
   }
@@ -22,7 +22,8 @@ const userSchema = new Schema<IUser>({
     email:{
         type:String,
         required :true,
-        trim: true
+        trim: true,
+        lowercase:true
     },
     password:{
         type:String,
@@ -67,6 +68,14 @@ userSchema.virtual('post',{
     localField: '_id',
     foreignField: 'postedBy'
 })
+
+userSchema.virtual('post',{
+    ref:'post',
+    localField: '_id',
+    foreignField: 'sharedBy'
+})
+
+
 
 userSchema.set('toObject', { virtuals: true });
 userSchema.set('toJSON', { virtuals: true });
