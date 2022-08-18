@@ -1,9 +1,15 @@
-import {Request,Response} from 'express'
+import {Request,response,Response} from 'express'
 import { User } from '../models/user';
 import * as userlib from '../lib/user'
 import { Error } from 'mongoose';
 import { Boom } from '@hapi/boom';
 import {IGetUserAuthInfoRequest} from "../types/types"
+import Stripe from 'stripe';
+
+const publishable_key='pk_test_51LY80CC9gE7fmgQgnD7cwXbMpILGuIAppj6EwuN6Vsh4sb3eUEgyvmyYJ0PNXLFoNfzCN5kxEQYjTUWnjye1KdpD00AKCUn3dQ';
+const secret_key='sk_test_51LY80CC9gE7fmgQgraV8583r0o2CpXBafHrrdbVduKvs1OTaW6KqIhmcIjdIr3UiNleU0IQ6Cqx5iSWPMNQlnBTr00nHOSdE5c';
+
+const stripe = new Stripe(secret_key,{apiVersion: '2022-08-01'});
 
 const signUp = async (req:Request,res:Response)=>{
     try{
@@ -49,45 +55,35 @@ const signOutAll = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     }
 }
 
-const followUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+const followUnfollowUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     try{
-        const user= await userlib.followUser(req.user,req.params.id)
+        const user= await userlib.followUnfollowUser(req.user,req.params.id)
         const updateduser =await user.save()
         res.status(200).send(updateduser)
     }
     catch(e:any){
-        res.status(e.output.statusCode|| 400).send({Error:e.message})
-        
+        res.status(e.output?.statusCode|| 400).send({Error:e.message} )
     }
 }
 
-const userFeed = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+const goPremium = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     try{
-        
-    }
+        stripe.customers.create({})
+        stripe.charges.create({
+            amount:2500,
+            currency:'usd',
+            source:req.body.card,
+            receipt_email:req.user.email}).then((result)=>{
+                
+                res.status(200).send({status:result.status})
+            }).catch((err)=>{
+                res.status(500).send(err)
+            })
+        }
     catch(e:any){
-        
-    }
-}
-
-const likePost = async (req:Request,res:Response)=>{
-    try{
-
-    }
-    catch{
-        
-    }
-}
-
-const sharePost = async(req:Request,res:Response)=>{
-    try{
-
-    }
-    catch{
-        
+        res.status(e.output?.statusCode|| 400).send({Error:e.message} )
     }
 }
 
 
-
-export {signUp,signIn,signOut,signOutAll,userFeed,followUser}
+export {signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium}

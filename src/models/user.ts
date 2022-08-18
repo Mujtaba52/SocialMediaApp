@@ -2,14 +2,20 @@ import { model, Schema,Types } from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+enum role{
+    MODERATOR='Moderator',
+    MEMBER='Member',
+    PREMIUM='Premium'
+}
 
 interface IUser {
     _id?:Types.ObjectId;
     name: string;
     email: string;
     password: string;
-    following?:[Types.ObjectId];
-    followers?:[Types.ObjectId];
+    following?:Types.ObjectId[];
+    followers?:Types.ObjectId[];
+    userRole:string;
     tokens?:string;
     generateWebToken?:any;
   }
@@ -22,7 +28,8 @@ const userSchema = new Schema<IUser>({
     email:{
         type:String,
         required :true,
-        trim: true
+        trim: true,
+        lowercase:true
     },
     password:{
         type:String,
@@ -37,6 +44,11 @@ const userSchema = new Schema<IUser>({
         type:Types.ObjectId,
         default:[]
     }],
+    userRole:{
+        type:String,
+        enum:role,
+        default:role.MEMBER
+    },
     tokens:[{
         token:{
             type:String,
@@ -68,10 +80,18 @@ userSchema.virtual('post',{
     foreignField: 'postedBy'
 })
 
+userSchema.virtual('post',{
+    ref:'post',
+    localField: '_id',
+    foreignField: 'sharedBy'
+})
+
+
+
 userSchema.set('toObject', { virtuals: true });
 userSchema.set('toJSON', { virtuals: true });
 
 const User = model('user',userSchema)
 
 
-export {User,IUser}
+export {User,IUser,role}
