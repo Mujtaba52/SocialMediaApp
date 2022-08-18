@@ -1,11 +1,11 @@
 import * as express from "express";
 import {User} from "../models/user"
-import { signUp,signIn,signOut,signOutAll,userFeed,followUnfollowUser } from "../controllers/user";
+import { signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium } from "../controllers/user";
 import {SignInValidator,SignUpValidator} from "../validations/userValidations"
 import {auth} from "../middleware/auth"
 const router = express.Router();
 
-//CRUD get posts update and delete 
+//CRUD update and delete 
 router.post('/signup',SignUpValidator,signUp)
 
 router.post('/signIn',SignInValidator,signIn)
@@ -14,10 +14,11 @@ router.post('/signOut',auth,signOut)
 
 router.post('/signOutAll',auth,signOutAll)
 
-//edit this one ..add unfollow in this one
 router.post('/followUnfollowUser/:id',auth,followUnfollowUser)
 
-router.get('/userFeed',auth,userFeed)
+router.post('/goPremium',auth,goPremium)
+//update
+//delete 
 export {router}
 
 

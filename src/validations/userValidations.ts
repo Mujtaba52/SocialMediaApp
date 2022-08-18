@@ -1,13 +1,14 @@
 import joi from 'joi';
 import mongoose from 'mongoose';
 import {Request,Response} from 'express';
-import {IUser} from '../models/user';
+import {IUser,role} from '../models/user';
 
 
 const userSignup = joi.object<IUser>({
     name: joi.string().required(),
     email: joi.string().email().required(),
-    password: joi.string().min(3).required()
+    password: joi.string().min(3).required(),
+    userRole:joi.string().valid(role.MEMBER,role.MODERATOR,role.PREMIUM)
 })
 
 const userSignin = joi.object<IUser>({

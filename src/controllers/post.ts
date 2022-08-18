@@ -32,4 +32,33 @@ const getUserFeed = async (req:IGetUserAuthInfoRequest,res:Response) => {
         }
 }
 
-export {createPost,sharePost,getUserFeed}
+const editPost = async (req:IGetUserAuthInfoRequest,res:Response) => {
+        try{
+                const post = await postlib.editPost(req.user,req.body,req.params.id)
+                res.status(200).send(post)
+        }
+        catch(e:any){
+                res.status(e.output?.statusCode|| 400).send({Error:e.message});
+        }
+}
+
+const deletePost = async (req:IGetUserAuthInfoRequest,res:Response) => {
+        try{
+                const post = await postlib.deletePost(req.user,req.params.id)
+                res.status(200).send(post)
+        }
+        catch(e:any){
+                res.status(e.output?.statusCode|| 400).send({Error:e.message});
+        }
+}
+
+const likePost = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+        try{
+                const post = await postlib.likePost(req.user,req.params.id)
+                res.status(200).send(post)
+        }
+        catch(e:any){
+                res.status(e.output?.statusCode|| 400).send({Error:e.message});
+        }
+    }
+export {createPost,sharePost,getUserFeed,deletePost,editPost,likePost}
