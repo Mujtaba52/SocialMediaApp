@@ -14,8 +14,6 @@ router.patch('/editPost/:id',auth,editPost)
 
 router.delete('/deletePost/:id',auth,deletePost)
 
-router.delete('/deletePost/:id',auth,deletePost)
-
 router.post('/likePost/:id',auth,likePost)
 
 
