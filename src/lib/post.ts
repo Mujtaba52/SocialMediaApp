@@ -22,8 +22,8 @@ const getUserFeed = async(currentUser:any,page:any,limit:any)=>{
 
     let userPosts = [];
     const postArr =  await Post.find({$or:[
-        {postedBy:currentUser.following},{sharedBy:{$in:currentUser.following}}
-    ] }).limit(Number(limit)).skip((Number(page)-1)*Number(limit)).select('-sharedBy').sort('createdAt')
+        {postedBy:currentUser.following},{'sharedBy.user':{$in:currentUser.following}}
+    ] }).limit(Number(limit)).skip((Number(page)-1)*Number(limit)).select('-sharedBy').sort('createdAt') 
 
     // //const sharedByUsersFollowing = await Post.find({sharedBy:currentUser.following})
 

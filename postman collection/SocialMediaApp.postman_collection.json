@@ -1,0 +1,482 @@
+{
+	"info": {
+		"_postman_id": "73d29f3b-e882-4ae6-8ded-9359d0077f78",
+		"name": "SocialMediaApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18616444"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "User Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Mr Mod\",\n    \"email\" :\"Mod@gmail.com\",\n    \"password\":\"12345\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/signup",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"signup"
+							]
+						},
+						"description": "This API allows the user to create a new user for the social media app."
+					},
+					"response": []
+				},
+				{
+					"name": "User Sign In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code===200)",
+									"{",
+									"    pm.environment.set('AuthToken',pm.response.json().tokens[0].token)",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\" :\"jack@gmail.com\",\n    \"password\":\"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/signIn",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"signIn"
+							]
+						},
+						"description": "This API allows the user to sign into an existing user."
+					},
+					"response": []
+				},
+				{
+					"name": "User Sign Out",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/signOut",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"signOut"
+							]
+						},
+						"description": "This API logs out the current user that is logged in."
+					},
+					"response": []
+				},
+				{
+					"name": "User Sign Out All",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/signOutAll",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"signOutAll"
+							]
+						},
+						"description": "This API logs out all possible users who are logged into the app using the current credentials."
+					},
+					"response": []
+				},
+				{
+					"name": "Follow/Unfollow User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/followUnfollow/6303128b9d0cec85008e660f",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"followUnfollow",
+								"6303128b9d0cec85008e660f"
+							]
+						},
+						"description": "This API allows the user to follow am existing user that the user is not already following or unfollow the user if the user is already following."
+					},
+					"response": []
+				},
+				{
+					"name": "Go Premium",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"card\":\"tok_visa\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/goPremium",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"goPremium"
+							]
+						},
+						"description": "This API allows the user to set the premium account status to true."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"post for deletion\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/createPost",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"createPost"
+							]
+						},
+						"description": "This API allows the user to create a new post."
+					},
+					"response": [
+						{
+							"name": "Create Post",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"description\": \"Dummy Post\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:4000/createPost",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"createPost"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "210"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"d2-qn6sgmDUEUcvEIbiEUmRHPUc3ac\""
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 22 Aug 2022 04:06:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"description\": \"Dummy Post\",\n    \"likes\": [],\n    \"postedBy\": \"62fd2ca92c5d80fdd628bcbb\",\n    \"_id\": \"630300b3c21952e9cc05c3ae\",\n    \"sharedBy\": [],\n    \"createdAt\": \"2022-08-22T04:06:11.610Z\",\n    \"updatedAt\": \"2022-08-22T04:06:11.610Z\",\n    \"__v\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Share Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/sharePost/62fd2c932c5d80fdd628bcb8",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"sharePost",
+								"62fd2c932c5d80fdd628bcb8"
+							]
+						},
+						"description": "This API allows the user to share an already existing post."
+					},
+					"response": []
+				},
+				{
+					"name": "User Feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/userFeed?page=1&limit=6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"userFeed"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "6"
+								}
+							]
+						},
+						"description": "This API allows the user to get all the posts shared or posted by the users that he/she is following."
+					},
+					"response": [
+						{
+							"name": "User Feed",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:4000/userFeed?page=1&limit=2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "4000",
+									"path": [
+										"userFeed"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "2"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "399"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"18f-/SQmez8/A2iaVzWAE8fwcauhbcU\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 19 Aug 2022 16:00:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"_id\": \"62fd2c932c5d80fdd628bcb8\",\n        \"description\": \"Jerry's post\",\n        \"likes\": [],\n        \"postedBy\": \"62fd2c792c5d80fdd628bcb1\",\n        \"createdAt\": \"2022-08-17T17:59:47.494Z\",\n        \"updatedAt\": \"2022-08-18T13:05:38.306Z\",\n        \"__v\": 2\n    },\n    {\n        \"_id\": \"62fd2fbde7c7134713d35136\",\n        \"description\": \"larry's post\",\n        \"likes\": [],\n        \"postedBy\": \"62fd2fa6e7c7134713d35130\",\n        \"createdAt\": \"2022-08-17T18:13:17.017Z\",\n        \"updatedAt\": \"2022-08-17T18:13:46.200Z\",\n        \"__v\": 1\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/deletePost/62fe818bddbc403ee528cb60",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"deletePost",
+								"62fe818bddbc403ee528cb60"
+							]
+						},
+						"description": "This API allows the user to delete any of his created posts."
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Post",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Test post updation jack3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/editPost/62fe0a4bc6648ca377b1ea9e",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"editPost",
+								"62fe0a4bc6648ca377b1ea9e"
+							]
+						},
+						"description": "This API allows the user to edit any of his created posts."
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/likePost/62fe2e4b7d5d45ac0f96fbf1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"likePost",
+								"62fe2e4b7d5d45ac0f96fbf1"
+							]
+						},
+						"description": "This API allows the user to like any existing posts."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{AuthToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

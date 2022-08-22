@@ -2,7 +2,7 @@ import { error } from 'console';
 import {Request,Response} from 'express'
 import { User } from '../models/user';
 import bcrypt from "bcrypt"
-import boom, { Boom } from "@hapi/boom"
+import * as boom from "@hapi/boom"
 import { any, string } from 'joi';
 import { Types } from 'mongoose';
 import { Post } from '../models/post';
@@ -51,8 +51,9 @@ const followUnfollowUser = async (currentUser:any,UserToFollowUnfollow:String)=>
     if(user._id===currentUser._id) throw boom.notFound("You cannot follow yourself");        
     if(currentUser.following.includes(user._id) )
     {
-        currentUser.following= currentUser.following.filter((id:any)=>{id!==user._id})
-        user.followers = user.followers?.filter((id:any)=>{id!==currentUser._id})
+        currentUser.following= currentUser.following.filter((id:any)=>{return id.toString()!==user._id.toString()})
+        user.followers = user.followers?.filter((id:any)=>{ id.toString()!==currentUser._id.toString()})
+        
         console.log("------User Unfollowed!------")
     }
     else{

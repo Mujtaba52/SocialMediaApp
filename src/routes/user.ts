@@ -14,7 +14,7 @@ router.post('/signOut',auth,signOut)
 
 router.post('/signOutAll',auth,signOutAll)
 
-router.post('/followUnfollowUser/:id',auth,followUnfollowUser)
+router.post('/followUnfollow/:id',auth,followUnfollowUser)
 
 router.post('/goPremium',auth,goPremium)
 //update

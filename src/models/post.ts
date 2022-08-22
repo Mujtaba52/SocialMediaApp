@@ -7,7 +7,7 @@ interface IPost {
     description: string;
     likes: Types.ObjectId[];
     postedBy?: Types.ObjectId;
-    sharedBy:{user: Types.ObjectId,createdat?:Date}[];
+    sharedBy:{user: Types.ObjectId,sharedAt?:Date}[];
   }
 
 const postSchema: Schema<IPost> = new Schema({
@@ -28,7 +28,7 @@ const postSchema: Schema<IPost> = new Schema({
     },
     sharedBy:[{
         _id:false,
-            createdat:{
+        sharedAt:{
                 type:Date,
                 default:new Date()
             },
