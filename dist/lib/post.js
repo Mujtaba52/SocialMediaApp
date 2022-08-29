@@ -17,7 +17,6 @@ const post_1 = require("../models/post");
 const user_1 = require("../models/user");
 const boom_1 = __importDefault(require("@hapi/boom"));
 const createPost = (postData, UserId) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(Object.assign({}, postData));
     const post = new post_1.Post(Object.assign(Object.assign({}, postData), { postedBy: UserId }));
     const myPost = yield post.save();
     return myPost;
