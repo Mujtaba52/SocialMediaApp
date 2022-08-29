@@ -86,6 +86,16 @@ userSchema.virtual('post',{
     foreignField: 'sharedBy'
 })
 
+userSchema.methods.toJSON= function(){
+    const user = this;
+    const userObj = user.toObject();
+    delete userObj.password;
+    delete userObj.id;
+    delete userObj.tokens;
+    // delete userObj.__v;
+
+    return userObj;
+}
 
 
 userSchema.set('toObject', { virtuals: true });

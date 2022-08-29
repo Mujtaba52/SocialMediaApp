@@ -21,7 +21,7 @@ const signUp = async (userAttributes:any)=>{
 }    
 
 const SignIn = async (userCredentials:any)=>{
-        const myUser = await User.findOne({ email:userCredentials.email });
+        const myUser = await User.findOne({ email:userCredentials.email })//.select('-tokens');
         if (!myUser) {
             throw boom.unauthorized("Invalid Email or Password");
         }
@@ -29,8 +29,8 @@ const SignIn = async (userCredentials:any)=>{
         if (!isMatch) {
             throw boom.unauthorized("Invalid Email or Password");
         }
-        myUser.generateWebToken();
-        return myUser;
+        const token = await myUser.generateWebToken()
+        return {myUser,token};
 }
 
 const signOut = async (tokens:any,currentAccountToken:any)=>{
@@ -65,9 +65,16 @@ const followUnfollowUser = async (currentUser:any,UserToFollowUnfollow:String)=>
     return currentUser
 
 }
-const likePost = async (req:Request,res:Response)=>{
-    
+
+const editUser = async (currentUser:any,editInfo:any)=>{
+    const user = User.findByIdAndUpdate(currentUser._id,editInfo,{new:true})
+    return user;
 }
 
-export {signUp,SignIn,signOut,likePost,signOutAll,followUnfollowUser}
+const deleteUser = async (currentUser:any)=>{
+    await User.findByIdAndDelete(currentUser._id)
+    return {status:"User successfully deleted"}
+}
+
+export {signUp,SignIn,signOut,signOutAll,followUnfollowUser,deleteUser,editUser}
 

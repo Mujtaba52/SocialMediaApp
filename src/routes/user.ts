@@ -1,11 +1,10 @@
 import * as express from "express";
 import {User} from "../models/user"
-import { signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium } from "../controllers/user";
+import { signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium,editUser,deleteUser } from "../controllers/user";
 import {SignInValidator,SignUpValidator} from "../validations/userValidations"
 import {auth} from "../middleware/auth"
 const router = express.Router();
 
-//CRUD update and delete 
 router.post('/signup',SignUpValidator,signUp)
 
 router.post('/signIn',SignInValidator,signIn)
@@ -17,8 +16,12 @@ router.post('/signOutAll',auth,signOutAll)
 router.post('/followUnfollow/:id',auth,followUnfollowUser)
 
 router.post('/goPremium',auth,goPremium)
-//update
-//delete 
+
+router.patch('/edit',auth,editUser)
+
+router.delete('/delete',auth,deleteUser)
+
+
 export {router}
 
 

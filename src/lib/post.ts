@@ -4,7 +4,6 @@ import { role } from '../models/user';
 import boom, { Boom } from "@hapi/boom"
 
 const createPost = async (postData:any,UserId:any)=>{
-    console.log({...postData})
     const post = new Post({...postData,postedBy:UserId});
     const myPost = await post.save();
     return myPost;
@@ -19,17 +18,21 @@ const sharePost = async(currentUser:any, PostId:String)=>{
 }
 
 const getUserFeed = async(currentUser:any,page:any,limit:any)=>{
+    if(currentUser.userRole===role.PREMIUM)
+    {
+        let userPosts = [];
+        const postArr =  await Post.find({$or:[
+            {postedBy:currentUser.following},{'sharedBy.user':{$in:currentUser.following}}
+        ] }).limit(Number(limit)).skip((Number(page)-1)*Number(limit)).select('-sharedBy').sort({createdAt:1,'sharedBy.sharedAt':1})
 
-    let userPosts = [];
-    const postArr =  await Post.find({$or:[
-        {postedBy:currentUser.following},{'sharedBy.user':{$in:currentUser.following}}
-    ] }).limit(Number(limit)).skip((Number(page)-1)*Number(limit)).select('-sharedBy').sort('createdAt') 
-
-    // //const sharedByUsersFollowing = await Post.find({sharedBy:currentUser.following})
-
-    // let postArr= [...PostedByUsersFollowing,...sharedByUsersFollowing]
-    //PostedByUsersFollowing.concat(sharedByUsersFollowing);
-    return postArr
+        // //const sharedByUsersFollowing = await Post.find({sharedBy:currentUser.following})       {createdAt:1,'sharedBy.sharedAt':1} .select('-sharedBy')
+        //;(await Post.aggregate()).find
+        // let postArr= [...PostedByUsersFollowing,...sharedByUsersFollowing]
+        //PostedByUsersFollowing.concat(sharedByUsersFollowing);
+        return postArr
+    }
+    return {error: "This feature is for premium users only"}
+    
 }
 
 const editPost = async(currentUser:any,postUpdate:any, PostId:String)=>{
@@ -53,7 +56,7 @@ const likePost = async (currentUser:any, PostId:String)=>{
     if(!post) throw boom.notFound("Post Not found");
     if(post.likes.includes(currentUser._id) )
     {
-        post.likes= post.likes.filter((id:any)=>{id!==currentUser._id})
+        post.likes= post.likes.filter((id:any)=>{id.toString()!==currentUser._id.toString()})
         return post.save()
         console.log("------post unliked!------")
     }

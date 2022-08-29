@@ -1,5 +1,5 @@
 import {Request,response,Response} from 'express'
-import { User } from '../models/user';
+import { role, User } from '../models/user';
 import * as userlib from '../lib/user'
 import { Error } from 'mongoose';
 import { Boom } from '@hapi/boom';
@@ -24,7 +24,9 @@ const signUp = async (req:Request,res:Response)=>{
 const signIn = async (req:Request,res:Response)=>{
     try{
         const user= await userlib.SignIn(req.body)
-        res.status(200).send(user)
+        const myUser=user.myUser
+        const token =user.token
+        res.status(200).send({myUser,token})
     }
     catch(e:any){
         res.status(e.output.statusCode).send({Error:e.message})
@@ -74,7 +76,8 @@ const goPremium = async (req:IGetUserAuthInfoRequest,res:Response)=>{
             currency:'usd',
             source:req.body.card,
             receipt_email:req.user.email}).then((result)=>{
-                
+                req.user.userRole = role.PREMIUM;
+                req.user.save();
                 res.status(200).send({status:result.status})
             }).catch((err)=>{
                 res.status(500).send(err)
@@ -85,5 +88,27 @@ const goPremium = async (req:IGetUserAuthInfoRequest,res:Response)=>{
     }
 }
 
+const editUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+    try{
+        const user= await userlib.editUser(req.user,req.body)
+        res.status(200).send(user)
+    }
+    catch(e:any){
+        res.status(e.output.statusCode).send({Error:e.message})
+    }
+    
+}
 
-export {signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium}
+const deleteUser = async (req:IGetUserAuthInfoRequest,res:Response)=>{
+    try{
+        const user= await userlib.deleteUser(req.user)
+        res.status(200).send(user)
+    }
+    catch(e:any){
+        res.status(e.output.statusCode).send({Error:e.message})
+    }
+    
+}
+
+
+export {signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium,editUser,deleteUser}
