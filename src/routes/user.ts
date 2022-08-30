@@ -1,32 +1,25 @@
-import * as express from "express";
-import {User} from "../models/user"
-import { signUp,signIn,signOut,signOutAll,followUnfollowUser,goPremium,editUser,deleteUser } from "../controllers/user";
-import {SignInValidator,SignUpValidator} from "../validations/userValidations"
-import {auth} from "../middleware/auth"
-const router = express.Router();
+import * as express from 'express'
+import { signUp, signIn, signOut, signOutAll, followUnfollowUser, goPremium, editUser, deleteUser } from '../controllers/user'
+import { SignInValidator, SignUpValidator } from '../validations/userValidations'
+import { auth } from '../middleware/auth'
+const router = express.Router()
 
-router.post('/signup',SignUpValidator,signUp)
+router.post('/sign_up', SignUpValidator, signUp)
 
-router.post('/signIn',SignInValidator,signIn)
+router.post('/sign_in', SignInValidator, signIn)
 
-router.post('/signOut',auth,signOut)
+router.use(auth)
 
-router.post('/signOutAll',auth,signOutAll)
+router.post('/sign_out', signOut)
 
-router.post('/followUnfollow/:id',auth,followUnfollowUser)
+router.post('/sign_out_all', signOutAll)
 
-router.post('/goPremium',auth,goPremium)
+router.post('/follow_un_follow/:id', followUnfollowUser)
 
-router.patch('/edit',auth,editUser)
+router.post('/go_premium', goPremium)
 
-router.delete('/delete',auth,deleteUser)
+router.patch('/', editUser)
 
+router.delete('/', deleteUser)
 
-export {router}
-
-
-// Build a Social network backend for users to connect and share posts. 
-// A user should be able to sign up and follow/unfollow other users. 
-// A feed will show all the posts by users we follow.
-//  Additionally the feed can be hidden behind a paywall and integrated with stripe to create a subscription or a one time payment option. 
-//  Another layer of users could be added to moderate the content on the network.
+export { router }

@@ -1,20 +1,18 @@
 import * as express from 'express'
-const router = express.Router();
-import {createPost,sharePost,getUserFeed,editPost,deletePost,likePost} from '../controllers/post'
-import {auth} from '../middleware/auth'
-import {createPostValidator} from '../validations/postValidation'
+import { createPost, sharePost, getUserFeed, editPost, deletePost, likePost } from '../controllers/post'
+import { createPostValidator } from '../validations/postValidation'
+const router = express.Router()
 
-router.post('/createPost',createPostValidator,auth,createPost)
+router.post('/posts', createPostValidator, createPost)
 
-router.post('/sharePost/:id',auth,sharePost)
+router.post('/posts/:id/share', sharePost)
 
-router.get('/userFeed',auth,getUserFeed)
+router.get('/posts/feed', getUserFeed)
 
-router.patch('/editPost/:id',auth,editPost)
+router.put('/posts/:id', editPost)
 
-router.delete('/deletePost/:id',auth,deletePost)
+router.delete('/posts/:id', deletePost)
 
-router.post('/likePost/:id',auth,likePost)
+router.patch('/posts/:id/like', likePost)
 
-
-export {router}
+export { router }
