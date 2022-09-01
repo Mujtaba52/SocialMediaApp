@@ -6,8 +6,33 @@ interface IPost {
   likes: Types.ObjectId[];
   postedBy?: Types.ObjectId;
   sharedBy: Array<{user: Types.ObjectId, sharedAt?: Date}>;
-  parentPost?: Types.ObjectId;
+  parent?: Types.ObjectId;
+  comments?: Array<{_id?: Types.ObjectId, text: string, likes?: Types.ObjectId[], tag?: Types.ObjectId[], postedBy: Types.ObjectId,
+    replies?: Array<{text: string, likes?: Types.ObjectId[], tag?: Types.ObjectId[] }>, createdAt?: Date}>;
 }
+
+// interface IReply {
+//   _id?: Types.ObjectId;
+//   likes?: Types.ObjectId[];
+//   text: string;
+//   replies?: IReply;
+// }
+
+// const repliesSchema: Schema<IReply> = new Schema({
+//   replies: [{
+//     text: {
+//       type: String,
+//       required: true
+//     },
+//     likes: [{
+//       type: mongoose.Types.ObjectId,
+//       ref: 'user'
+//     }],
+//     replies: {
+//       type: replies
+//     }
+//   }]
+// })
 
 const postSchema: Schema<IPost> = new Schema({
 
@@ -37,7 +62,40 @@ const postSchema: Schema<IPost> = new Schema({
       ref: 'user'
     }
   }],
-  parentPost: {
+  comments: [{
+    text: {
+      type: String,
+      required: true
+    },
+    likes: [{
+      type: mongoose.Types.ObjectId,
+      ref: 'user'
+    }],
+    tag: [{
+      type: mongoose.Types.ObjectId,
+      ref: 'user'
+    }],
+    postedBy: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      ref: 'user'
+    },
+    replies: [{
+      text: {
+        type: String,
+        required: true
+      },
+      likes: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'user'
+      }],
+      tag: [{
+        type: mongoose.Types.ObjectId,
+        ref: 'user'
+      }]
+    }]
+  }],
+  parent: {
     type: mongoose.Types.ObjectId,
     default: null,
     ref: 'post'

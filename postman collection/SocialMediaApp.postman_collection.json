@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"Mr Mod\",\n    \"email\" :\"Mod@gmail.com\",\n    \"password\":\"12345\"\n\n}",
+							"raw": "{\n    \"name\":\"Jim\",\n    \"email\" :\"jim@gmail.com\",\n    \"password\":\"12345\"\n\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,13 +24,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/user/signup",
+							"raw": "{{url}}/v1/users/sign_up",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"signup"
+								"v1",
+								"users",
+								"sign_up"
 							]
 						},
 						"description": "This API allows the user to create a new user for the social media app."
@@ -46,7 +47,7 @@
 								"exec": [
 									"if(pm.response.code===200)",
 									"{",
-									"    pm.environment.set('AuthToken',pm.response.json().tokens[0].token)",
+									"    pm.environment.set('AuthToken',pm.response.json().token)",
 									"}"
 								],
 								"type": "text/javascript"
@@ -58,7 +59,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\" :\"jack@gmail.com\",\n    \"password\":\"12345\"\n}",
+							"raw": "{\n    \"email\" :\"jim@gmail.com\",\n    \"password\":\"12345\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -66,13 +67,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/user/signIn",
+							"raw": "{{url}}/v1/users/sign_in",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"signIn"
+								"v1",
+								"users",
+								"sign_in"
 							]
 						},
 						"description": "This API allows the user to sign into an existing user."
@@ -85,13 +87,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/user/signOut",
+							"raw": "{{url}}/v1/users/sign_out",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"signOut"
+								"v1",
+								"users",
+								"sign_out"
 							]
 						},
 						"description": "This API logs out the current user that is logged in."
@@ -104,13 +107,14 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/user/signOutAll",
+							"raw": "{{url}}/v1/users/sign_out_all",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"signOutAll"
+								"v1",
+								"users",
+								"sign_out_all"
 							]
 						},
 						"description": "This API logs out all possible users who are logged into the app using the current credentials."
@@ -118,7 +122,7 @@
 					"response": []
 				},
 				{
-					"name": "Follow/Unfollow User",
+					"name": "Follow User",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -132,14 +136,45 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/user/followUnfollow/6303128b9d0cec85008e660f",
+							"raw": "{{url}}/v1/users/630fca16009ea83a8ad36fa3/follow",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"followUnfollow",
-								"6303128b9d0cec85008e660f"
+								"v1",
+								"users",
+								"630fca16009ea83a8ad36fa3",
+								"follow"
+							]
+						},
+						"description": "This API allows the user to follow am existing user that the user is not already following or unfollow the user if the user is already following."
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/users/630313089d0cec85008e6626/unfollow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"630313089d0cec85008e6626",
+								"unfollow"
 							]
 						},
 						"description": "This API allows the user to follow am existing user that the user is not already following or unfollow the user if the user is already following."
@@ -153,7 +188,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n     \"card\":\"tok_visa\"\n}\n",
+							"raw": "{\n     \"card\":\"card\"\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -161,16 +196,62 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/user/goPremium",
+							"raw": "{{url}}/v1/users/go_premium",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"user",
-								"goPremium"
+								"v1",
+								"users",
+								"go_premium"
 							]
 						},
 						"description": "This API allows the user to set the premium account status to true."
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User detail",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\" :\"Another user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
 					},
 					"response": []
 				}
@@ -186,7 +267,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"description\": \"post for deletion\"\n}",
+							"raw": "{\n    \"description\": \"Another Test post by Mr Jim\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -194,12 +275,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/createPost",
+							"raw": "{{url}}/v1/posts",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"createPost"
+								"v1",
+								"posts"
 							]
 						},
 						"description": "This API allows the user to create a new post."
@@ -274,14 +356,25 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"sharing jack's post\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{url}}/sharePost/62fd2c932c5d80fdd628bcb8",
+							"raw": "{{url}}/v1/posts/630fcf20428983d92e60fe5c/share",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"sharePost",
-								"62fd2c932c5d80fdd628bcb8"
+								"v1",
+								"posts",
+								"630fcf20428983d92e60fe5c",
+								"share"
 							]
 						},
 						"description": "This API allows the user to share an already existing post."
@@ -294,21 +387,23 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/userFeed?page=1&limit=6",
+							"raw": "{{url}}/v1/posts/feed?page=2&limit=2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"userFeed"
+								"v1",
+								"posts",
+								"feed"
 							],
 							"query": [
 								{
 									"key": "page",
-									"value": "1"
+									"value": "2"
 								},
 								{
 									"key": "limit",
-									"value": "6"
+									"value": "2"
 								}
 							]
 						},
@@ -386,13 +481,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/deletePost/62fe818bddbc403ee528cb60",
+							"raw": "{{url}}/v1/posts/630c097c305b72c0d946f8e6",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"deletePost",
-								"62fe818bddbc403ee528cb60"
+								"v1",
+								"posts",
+								"630c097c305b72c0d946f8e6"
 							]
 						},
 						"description": "This API allows the user to delete any of his created posts."
@@ -402,11 +498,11 @@
 				{
 					"name": "Edit Post",
 					"request": {
-						"method": "PATCH",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"description\": \"Test post updation jack3\"\n}",
+							"raw": "{\n    \"description\": \"Dummy post update\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -414,13 +510,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/editPost/62fe0a4bc6648ca377b1ea9e",
+							"raw": "{{url}}/v1/posts/630c09e2bfcc22ec6bf810c4",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"editPost",
-								"62fe0a4bc6648ca377b1ea9e"
+								"v1",
+								"posts",
+								"630c09e2bfcc22ec6bf810c4"
 							]
 						},
 						"description": "This API allows the user to edit any of his created posts."
@@ -430,16 +527,101 @@
 				{
 					"name": "Like Post",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/likePost/62fe2e4b7d5d45ac0f96fbf1",
+							"raw": "{{url}}/v1/posts/630c09e2bfcc22ec6bf810c4/like",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"likePost",
-								"62fe2e4b7d5d45ac0f96fbf1"
+								"v1",
+								"posts",
+								"630c09e2bfcc22ec6bf810c4",
+								"like"
+							]
+						},
+						"description": "This API allows the user to like any existing posts."
+					},
+					"response": []
+				},
+				{
+					"name": "unlike post",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/v1/posts/630c09e2bfcc22ec6bf810c4/unlike",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"630c09e2bfcc22ec6bf810c4",
+								"unlike"
+							]
+						},
+						"description": "This API allows the user to like any existing posts."
+					},
+					"response": []
+				},
+				{
+					"name": "comment on post",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\":\"tests comment with posted by attribute\",\n    \"tag\":\"630fc9ee009ea83a8ad36f98\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/posts/63109994ff982fcf4498b31c/comment",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"63109994ff982fcf4498b31c",
+								"comment"
+							]
+						},
+						"description": "This API allows the user to like any existing posts."
+					},
+					"response": []
+				},
+				{
+					"name": "Reply to comments",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"text\":\"Replying to the comment with automatic tagging \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/posts/63109994ff982fcf4498b31c/comment/631099b92afa122015f5e60f/reply",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"posts",
+								"63109994ff982fcf4498b31c",
+								"comment",
+								"631099b92afa122015f5e60f",
+								"reply"
 							]
 						},
 						"description": "This API allows the user to like any existing posts."

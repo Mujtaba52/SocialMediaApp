@@ -1,5 +1,8 @@
 import * as express from 'express'
-import { createPost, sharePost, getUserFeed, editPost, deletePost, likePost, unlikePost } from '../controllers/post'
+import {
+  createPost, sharePost, getUserFeed, editPost, deletePost,
+  likePost, unlikePost, commentOnPost, replyToComment
+} from '../controllers/post'
 import { asyncHandler } from '../helper'
 import { createPostValidator } from '../validations/postValidation'
 const router = express.Router()
@@ -17,5 +20,9 @@ router.delete('/:id', asyncHandler(deletePost))
 router.patch('/:id/like', asyncHandler(likePost))
 
 router.patch('/:id/unlike', asyncHandler(unlikePost))
+
+router.patch('/:id/comment', asyncHandler(commentOnPost))
+
+router.patch('/:id/comment/:commentId/reply', asyncHandler(replyToComment))
 
 export { router }

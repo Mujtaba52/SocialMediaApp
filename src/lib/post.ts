@@ -71,4 +71,20 @@ const unlikePost = async(currentUser: any, PostId: String) => {
   }
   throw boom.notAcceptable('Post Not liked')
 }
-export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost }
+
+const commentOnPost = async(currentUser: any, PostId: String, comment: any) => {
+  const post = await Post.findById(PostId)
+  if (!post) throw boom.notFound('Post Not found')
+  post.comments?.unshift({ ...comment, postedBy: currentUser._id })
+  return post.save()
+}
+
+const replyToComments = async(currentUser: any, PostId: String, CommentId: String, reply: any) => {
+  const post = await Post.findById(PostId)
+  if (!post) throw boom.notFound('Post Not found')
+  post.comments?.filter(comment =>
+    comment._id && comment._id.toString() === CommentId ? comment.replies?.unshift({ ...reply, tag: comment.postedBy }) : comment)
+  return post.save()
+}
+
+export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComments }
