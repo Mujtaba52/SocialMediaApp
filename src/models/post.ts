@@ -11,29 +11,6 @@ interface IPost {
     replies?: Array<{text: string, likes?: Types.ObjectId[], tag?: Types.ObjectId[] }>, createdAt?: Date}>;
 }
 
-// interface IReply {
-//   _id?: Types.ObjectId;
-//   likes?: Types.ObjectId[];
-//   text: string;
-//   replies?: IReply;
-// }
-
-// const repliesSchema: Schema<IReply> = new Schema({
-//   replies: [{
-//     text: {
-//       type: String,
-//       required: true
-//     },
-//     likes: [{
-//       type: mongoose.Types.ObjectId,
-//       ref: 'user'
-//     }],
-//     replies: {
-//       type: replies
-//     }
-//   }]
-// })
-
 const postSchema: Schema<IPost> = new Schema({
 
   description: {

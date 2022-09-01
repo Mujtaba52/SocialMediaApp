@@ -11,7 +11,7 @@ const createPost = async(postData: any, UserId: any) => {
 const sharePost = async(currentUser: any, PostId: String, postData: any) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
-  const sharedpost = new Post({ description: postData.description, postedBy: currentUser._id, parentPost: PostId })
+  const sharedpost = new Post({ description: postData.description, postedBy: currentUser._id, parent: PostId })
   post.sharedBy.unshift(currentUser._id)
   return sharedpost.save()
 }
@@ -21,9 +21,10 @@ const getUserFeed = async(currentUser: any, page: any, limit: any) => {
     throw boom.unauthorized('This feature is for premium users only')
   }
   const postArr = await Post.find({
-    postedBy: { $in: currentUser.following }
+    $or: [{ postedBy: { $in: currentUser.following } },
+      { 'comments.postedBy': { $in: currentUser.following } }, { likes: { $in: currentUser.following } }]
   })
-    .populate('parentPost')
+    .populate('parent')
     .limit(Number(limit)).skip((Number(page) - 1) * Number(limit))
     .sort({ createdAt: -1 })
 
