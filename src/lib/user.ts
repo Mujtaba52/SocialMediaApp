@@ -36,7 +36,20 @@ const signOutAll = () => {
   return []
 }
 
-const followUnfollowUser = async(currentUser: any, UserToFollowUnfollow: String) => {
+const followUser = async(currentUser: any, UserToFollowUnfollow: String) => {
+  const user = await User.findById(UserToFollowUnfollow)
+  if (!user) throw boom.notFound('User Not found')
+  if (user._id === currentUser._id) throw boom.notFound('You cannot follow yourself')
+  if (!currentUser.following.includes(user._id)) {
+    user.followers?.unshift(currentUser._id)
+    currentUser.following.unshift(UserToFollowUnfollow)
+    await user.save()
+    return currentUser
+  }
+  throw boom.badRequest('User already followed')
+}
+
+const unfollowUser = async(currentUser: any, UserToFollowUnfollow: String) => {
   const user = await User.findById(UserToFollowUnfollow)
   if (!user) throw boom.notFound('User Not found')
   if (user._id === currentUser._id) throw boom.notFound('You cannot follow yourself')
@@ -47,15 +60,10 @@ const followUnfollowUser = async(currentUser: any, UserToFollowUnfollow: String)
     user.followers = user.followers?.filter((id: any) => {
       return id.toString() !== currentUser._id.toString()
     })
-
-    console.log('------User Unfollowed!------')
-  } else {
-    user.followers?.unshift(currentUser._id)
-    currentUser.following.unshift(UserToFollowUnfollow)
-    console.log('------User followed!------')
+    await user.save()
+    return currentUser
   }
-  await user.save()
-  return currentUser
+  throw boom.badRequest('User not being followed')
 }
 
 const editUser = async(currentUser: any, editInfo: any) => {
@@ -68,4 +76,4 @@ const deleteUser = async(currentUser: any) => {
   return { status: 'User successfully deleted' }
 }
 
-export { signUp, SignIn, signOut, signOutAll, followUnfollowUser, deleteUser, editUser }
+export { signUp, SignIn, signOut, signOutAll, followUser, deleteUser, editUser, unfollowUser }

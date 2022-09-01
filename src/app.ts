@@ -8,6 +8,7 @@ import { auth } from './middleware/auth'
 import bodyParser from 'body-parser'
 import { Server, Socket } from 'socket.io'
 import { createServer } from 'http'
+import errorMiddleware from './middleware/error.middleware'
 dotenv.config()
 const app = express()
 
@@ -51,7 +52,8 @@ run().catch(console.dir)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/v1/users', userRouter.router)
-app.use('/v1', auth, postRouter.router)
+app.use('/v1/posts', auth, postRouter.router)
+app.use(errorMiddleware)
 const publicDirectoryPath = path.join(__dirname, 'public')
 app.use(express.static(publicDirectoryPath))
 httpServer.listen(4000 || process.env.PORT)

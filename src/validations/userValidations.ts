@@ -1,5 +1,4 @@
 import joi from 'joi'
-import mongoose from 'mongoose'
 import { Request, Response } from 'express'
 import { IUser, role } from '../models/user'
 
@@ -16,13 +15,13 @@ const userSignin = joi.object<IUser>({
 })
 
 const SignUpValidator = (req: Request, res: Response, next: any) => {
-  const { error, value } = userSignup.validate(req.body, { abortEarly: false })
+  const { error } = userSignup.validate(req.body, { abortEarly: false })
   if (error) return res.status(401).send(error.details)
   next()
 }
 
 const SignInValidator = (req: Request, res: Response, next: any) => {
-  const { error, value } = userSignin.validate(req.body, { abortEarly: false })
+  const { error } = userSignin.validate(req.body, { abortEarly: false })
   if (error) return res.status(401).send(error.details)
   next()
 }

@@ -1,25 +1,28 @@
 import * as express from 'express'
-import { signUp, signIn, signOut, signOutAll, followUnfollowUser, goPremium, editUser, deleteUser } from '../controllers/user'
+import { signUp, signIn, signOut, signOutAll, followUser, unfollowUser, goPremium, editUser, deleteUser } from '../controllers/user'
 import { SignInValidator, SignUpValidator } from '../validations/userValidations'
 import { auth } from '../middleware/auth'
+import { asyncHandler } from '../helper/index'
 const router = express.Router()
 
-router.post('/sign_up', SignUpValidator, signUp)
+router.post('/sign_up', SignUpValidator, asyncHandler(signUp))
 
-router.post('/sign_in', SignInValidator, signIn)
+router.post('/sign_in', SignInValidator, asyncHandler(signIn))
 
 router.use(auth)
 
-router.post('/sign_out', signOut)
+router.post('/sign_out', asyncHandler(signOut))
 
-router.post('/sign_out_all', signOutAll)
+router.post('/sign_out_all', asyncHandler(signOutAll))
 
-router.post('/follow_un_follow/:id', followUnfollowUser)
+router.post('/:id/follow', asyncHandler(followUser))
 
-router.post('/go_premium', goPremium)
+router.post('/:id/unfollow', asyncHandler(unfollowUser))
 
-router.patch('/', editUser)
+router.post('/go_premium', asyncHandler(goPremium))
 
-router.delete('/', deleteUser)
+router.patch('/', asyncHandler(editUser))
+
+router.delete('/', asyncHandler(deleteUser))
 
 export { router }

@@ -1,4 +1,3 @@
-import { time, timeStamp } from 'console'
 import mongoose, { Schema, model, Types } from 'mongoose'
 
 interface IPost {
@@ -7,6 +6,7 @@ interface IPost {
   likes: Types.ObjectId[];
   postedBy?: Types.ObjectId;
   sharedBy: Array<{user: Types.ObjectId, sharedAt?: Date}>;
+  parentPost?: Types.ObjectId;
 }
 
 const postSchema: Schema<IPost> = new Schema({
@@ -36,7 +36,12 @@ const postSchema: Schema<IPost> = new Schema({
       required: true,
       ref: 'user'
     }
-  }]
+  }],
+  parentPost: {
+    type: mongoose.Types.ObjectId,
+    default: null,
+    ref: 'post'
+  }
 }, {
   timestamps: true
 })

@@ -1,18 +1,21 @@
 import * as express from 'express'
-import { createPost, sharePost, getUserFeed, editPost, deletePost, likePost } from '../controllers/post'
+import { createPost, sharePost, getUserFeed, editPost, deletePost, likePost, unlikePost } from '../controllers/post'
+import { asyncHandler } from '../helper'
 import { createPostValidator } from '../validations/postValidation'
 const router = express.Router()
 
-router.post('/posts', createPostValidator, createPost)
+router.post('', createPostValidator, asyncHandler(createPost))
 
-router.post('/posts/:id/share', sharePost)
+router.post('/:id/share', asyncHandler(sharePost))
 
-router.get('/posts/feed', getUserFeed)
+router.get('/feed', asyncHandler(getUserFeed))
 
-router.put('/posts/:id', editPost)
+router.put('/:id', asyncHandler(editPost))
 
-router.delete('/posts/:id', deletePost)
+router.delete('/:id', asyncHandler(deletePost))
 
-router.patch('/posts/:id/like', likePost)
+router.patch('/:id/like', asyncHandler(likePost))
+
+router.patch('/:id/unlike', asyncHandler(unlikePost))
 
 export { router }
