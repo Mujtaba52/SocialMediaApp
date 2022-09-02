@@ -23,6 +23,6 @@ router.patch('/:id/unlike', asyncHandler(unlikePost))
 
 router.patch('/:id/comment', asyncHandler(commentOnPost))
 
-router.patch('/:id/comment/:commentId/reply', asyncHandler(replyToComment))
+router.patch('/:id/comment/:commentId', asyncHandler(replyToComment))
 
 export { router }

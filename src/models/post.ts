@@ -1,4 +1,5 @@
 import mongoose, { Schema, model, Types } from 'mongoose'
+import mongooseAutoPopulate from 'mongoose-autopopulate'
 
 interface IPost {
   _id?: Types.ObjectId;
@@ -7,8 +8,7 @@ interface IPost {
   postedBy?: Types.ObjectId;
   sharedBy: Array<{user: Types.ObjectId, sharedAt?: Date}>;
   parent?: Types.ObjectId;
-  comments?: Array<{_id?: Types.ObjectId, text: string, likes?: Types.ObjectId[], tag?: Types.ObjectId[], postedBy: Types.ObjectId,
-    replies?: Array<{text: string, likes?: Types.ObjectId[], tag?: Types.ObjectId[] }>, createdAt?: Date}>;
+  comments?: Types.ObjectId[]
 }
 
 const postSchema: Schema<IPost> = new Schema({
@@ -40,37 +40,10 @@ const postSchema: Schema<IPost> = new Schema({
     }
   }],
   comments: [{
-    text: {
-      type: String,
-      required: true
-    },
-    likes: [{
-      type: mongoose.Types.ObjectId,
-      ref: 'user'
-    }],
-    tag: [{
-      type: mongoose.Types.ObjectId,
-      ref: 'user'
-    }],
-    postedBy: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: 'user'
-    },
-    replies: [{
-      text: {
-        type: String,
-        required: true
-      },
-      likes: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'user'
-      }],
-      tag: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'user'
-      }]
-    }]
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: 'comment',
+    autopopulate: true
   }],
   parent: {
     type: mongoose.Types.ObjectId,
@@ -80,6 +53,8 @@ const postSchema: Schema<IPost> = new Schema({
 }, {
   timestamps: true
 })
+
+postSchema.plugin(mongooseAutoPopulate)
 
 const Post = model('post', postSchema)
 
