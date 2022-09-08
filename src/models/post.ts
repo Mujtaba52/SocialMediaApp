@@ -1,4 +1,5 @@
 import mongoose, { Schema, model, Types } from 'mongoose'
+import mongooseAutoPopulate from 'mongoose-autopopulate'
 
 interface IPost {
   _id?: Types.ObjectId;
@@ -6,7 +7,8 @@ interface IPost {
   likes: Types.ObjectId[];
   postedBy?: Types.ObjectId;
   sharedBy: Array<{user: Types.ObjectId, sharedAt?: Date}>;
-  parentPost?: Types.ObjectId;
+  parent?: Types.ObjectId;
+  comments?: Types.ObjectId[]
 }
 
 const postSchema: Schema<IPost> = new Schema({
@@ -37,7 +39,13 @@ const postSchema: Schema<IPost> = new Schema({
       ref: 'user'
     }
   }],
-  parentPost: {
+  comments: [{
+    type: mongoose.Types.ObjectId,
+    required: true,
+    ref: 'comment',
+    autopopulate: true
+  }],
+  parent: {
     type: mongoose.Types.ObjectId,
     default: null,
     ref: 'post'
@@ -45,6 +53,8 @@ const postSchema: Schema<IPost> = new Schema({
 }, {
   timestamps: true
 })
+
+postSchema.plugin(mongooseAutoPopulate)
 
 const Post = model('post', postSchema)
 

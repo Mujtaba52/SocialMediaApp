@@ -1,5 +1,5 @@
-import { Post } from '../models/post'
-import { role } from '../models/user'
+import { Post, Comment, role } from '../models'
+
 import boom from '@hapi/boom'
 
 const createPost = async(postData: any, UserId: any) => {
@@ -11,7 +11,7 @@ const createPost = async(postData: any, UserId: any) => {
 const sharePost = async(currentUser: any, PostId: String, postData: any) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
-  const sharedpost = new Post({ description: postData.description, postedBy: currentUser._id, parentPost: PostId })
+  const sharedpost = new Post({ description: postData.description, postedBy: currentUser._id, parent: PostId })
   post.sharedBy.unshift(currentUser._id)
   return sharedpost.save()
 }
@@ -21,9 +21,21 @@ const getUserFeed = async(currentUser: any, page: any, limit: any) => {
     throw boom.unauthorized('This feature is for premium users only')
   }
   const postArr = await Post.find({
-    postedBy: { $in: currentUser.following }
+    $or: [
+      { postedBy: { $in: currentUser.following } },
+      { 'comments.postedBy': { $in: currentUser.following } },
+      { likes: { $in: currentUser.following } },
+      { postedBy: currentUser._id }
+    ]
   })
-    .populate('parentPost')
+    .populate('parent')
+    // .populate({
+    //   path: 'comments',
+    //   populate: [{
+    //     path: 'replies'
+    //   }
+    //   ]
+    // })
     .limit(Number(limit)).skip((Number(page) - 1) * Number(limit))
     .sort({ createdAt: -1 })
 
@@ -71,4 +83,25 @@ const unlikePost = async(currentUser: any, PostId: String) => {
   }
   throw boom.notAcceptable('Post Not liked')
 }
-export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost }
+
+const commentOnPost = async(currentUser: any, PostId: String, comment: any) => {
+  const post = await Post.findById(PostId)
+  if (!post) throw boom.notFound('Post Not found')
+  const newComment = await Comment.create({ ...comment, postedBy: currentUser._id })
+  post.comments?.push(newComment._id)
+  await post.save()
+  return newComment
+}
+
+const replyToComments = async(currentUser: any, PostId: String, CommentId: String, reply: any) => {
+  const comment = await Comment.findById(CommentId)
+  if (!comment) throw boom.notFound('Comment Not found')
+  const newComment = await Comment.create({ ...reply, postedBy: currentUser._id })
+  comment.replies?.push(newComment._id)
+  await comment.save()
+  // post.comments?.filter(comment =>
+  //   comment._id && comment._id.toString() === CommentId ? comment.replies?.unshift({ ...reply, tag: comment.postedBy }) : comment)
+  return newComment
+}
+
+export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComments }

@@ -37,4 +37,15 @@ const unlikePost = async(req: IGetUserAuthInfoRequest, res: Response) => {
   const post = await postlib.unlikePost(req.user, req.params.id)
   res.status(200).send(post)
 }
-export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost }
+
+const commentOnPost = async(req: IGetUserAuthInfoRequest, res: Response) => {
+  const post = await postlib.commentOnPost(req.user, req.params.id, req.body)
+  res.status(200).send(post)
+}
+
+const replyToComment = async(req: IGetUserAuthInfoRequest, res: Response) => {
+  const post = await postlib.replyToComments(req.user, req.params.id, req.params.commentId, req.body)
+  res.status(200).send(post)
+}
+
+export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComment }
