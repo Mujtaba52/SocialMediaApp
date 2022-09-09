@@ -35,19 +35,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.auth = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 const user_1 = require("../models/user");
-//import { any, string } from "joi";
 const types_1 = require("util/types");
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
 const auth = function (req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const token = (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', '');
-            if (token) {
-                const decoded = jwt.verify(token, 'mySecretKey');
+            if (token && process.env.JWT_SECRET) {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
                 if (!(0, types_1.isStringObject)(decoded)) {
                     const user = yield user_1.User.findOne({ _id: decoded._id, 'tokens.token': token });
                     if (!user) {
-                        throw new Error("You must log In to continue");
+                        throw new Error('You must log In to continue');
                     }
                     req.user = user;
                     req.token = token;
@@ -59,7 +60,7 @@ const auth = function (req, res, next) {
             }
         }
         catch (e) {
-            res.status(401).send({ error: "You must log In to continue" });
+            res.status(401).send({ error: 'You must log In to continue' });
         }
     });
 };

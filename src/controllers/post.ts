@@ -7,6 +7,11 @@ const createPost = async(req: IGetUserAuthInfoRequest, res: Response) => {
   res.status(200).send(post)
 }
 
+const getPosts = async(req: IGetUserAuthInfoRequest, res: Response) => {
+  const post = await postlib.getPosts(req.user._id)
+  res.status(200).send(post)
+}
+
 const sharePost = async(req: IGetUserAuthInfoRequest, res: Response) => {
   const post = await postlib.sharePost(req.user, req.params.id, req.body)
   res.status(200).send(post)
@@ -48,4 +53,4 @@ const replyToComment = async(req: IGetUserAuthInfoRequest, res: Response) => {
   res.status(200).send(post)
 }
 
-export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComment }
+export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComment, getPosts }

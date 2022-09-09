@@ -26,17 +26,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = void 0;
+exports.Comment = exports.commentSchema = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_autopopulate_1 = __importDefault(require("mongoose-autopopulate"));
-const postSchema = new mongoose_1.Schema({
-    description: {
+const commentSchema = new mongoose_1.default.Schema({
+    text: {
         type: String,
         required: true
     },
     likes: [{
             type: mongoose_1.default.Types.ObjectId,
-            required: true,
+            ref: 'user'
+        }],
+    tag: [{
+            type: mongoose_1.default.Types.ObjectId,
             ref: 'user'
         }],
     postedBy: {
@@ -44,32 +47,14 @@ const postSchema = new mongoose_1.Schema({
         required: true,
         ref: 'user'
     },
-    sharedBy: [{
-            _id: false,
-            sharedAt: {
-                type: Date,
-                default: new Date()
-            },
-            user: {
-                type: mongoose_1.default.Types.ObjectId,
-                required: true,
-                ref: 'user'
-            }
-        }],
-    comments: [{
+    replies: [{
             type: mongoose_1.default.Types.ObjectId,
-            required: true,
             ref: 'comment',
             autopopulate: true
-        }],
-    parent: {
-        type: mongoose_1.default.Types.ObjectId,
-        default: null,
-        ref: 'post'
-    }
-}, {
-    timestamps: true
+        }]
 });
-postSchema.plugin(mongoose_autopopulate_1.default);
-const Post = (0, mongoose_1.model)('post', postSchema);
-exports.Post = Post;
+exports.commentSchema = commentSchema;
+// subTitles: [{ type: Schema.ObjectId, ref: 'workstructureSchema (dont know how you called it)' }],
+commentSchema.plugin(mongoose_autopopulate_1.default);
+const Comment = (0, mongoose_1.model)('comment', commentSchema);
+exports.Comment = Comment;

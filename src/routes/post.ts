@@ -1,13 +1,16 @@
 import * as express from 'express'
 import {
   createPost, sharePost, getUserFeed, editPost, deletePost,
-  likePost, unlikePost, commentOnPost, replyToComment
+  likePost, unlikePost, commentOnPost, replyToComment, getPosts
 } from '../controllers/post'
 import { asyncHandler } from '../helper'
 import { createPostValidator } from '../validations/postValidation'
+
 const router = express.Router()
 
 router.post('', createPostValidator, asyncHandler(createPost))
+
+router.get('', asyncHandler(getPosts))
 
 router.post('/:id/share', asyncHandler(sharePost))
 

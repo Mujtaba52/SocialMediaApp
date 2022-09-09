@@ -8,6 +8,11 @@ const createPost = async(postData: any, UserId: any) => {
   return myPost
 }
 
+const getPosts = async(UserId: any) => {
+  const post = await Post.find({ postedBy: UserId })
+  return post
+}
+
 const sharePost = async(currentUser: any, PostId: String, postData: any) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
@@ -104,4 +109,4 @@ const replyToComments = async(currentUser: any, PostId: String, CommentId: Strin
   return newComment
 }
 
-export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComments }
+export { createPost, sharePost, getUserFeed, deletePost, editPost, likePost, unlikePost, commentOnPost, replyToComments, getPosts }

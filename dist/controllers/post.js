@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
+exports.replyToComment = exports.commentOnPost = exports.unlikePost = exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
 const postlib = __importStar(require("../lib/post"));
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postlib.createPost(req.body, req.user._id);
@@ -40,58 +40,43 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.createPost = createPost;
 const sharePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const post = yield postlib.sharePost(req.user, req.params.id);
-        res.status(200).send(post);
-    }
-    catch (e) {
-        res.status(((_a = e.output) === null || _a === void 0 ? void 0 : _a.statusCode) || 400).send({ Error: e.message });
-    }
+    const post = yield postlib.sharePost(req.user, req.params.id, req.body);
+    res.status(200).send(post);
 });
 exports.sharePost = sharePost;
 const getUserFeed = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    try {
-        const { page = 1, limit = 2 } = req.query;
-        const posts = yield postlib.getUserFeed(req.user, page, limit);
-        res.status(200).send(posts);
-    }
-    catch (e) {
-        res.status(((_b = e.output) === null || _b === void 0 ? void 0 : _b.statusCode) || 400).send({ Error: e.message });
-    }
+    const { page = 1, limit = 2 } = req.query;
+    const posts = yield postlib.getUserFeed(req.user, page, limit);
+    res.status(200).send(posts);
 });
 exports.getUserFeed = getUserFeed;
 const editPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    try {
-        const post = yield postlib.editPost(req.user, req.body, req.params.id);
-        res.status(200).send(post);
-    }
-    catch (e) {
-        res.status(((_c = e.output) === null || _c === void 0 ? void 0 : _c.statusCode) || 400).send({ Error: e.message });
-    }
+    const post = yield postlib.editPost(req.user, req.body, req.params.id);
+    res.status(200).send(post);
 });
 exports.editPost = editPost;
 const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
-    try {
-        const post = yield postlib.deletePost(req.user, req.params.id);
-        res.status(200).send(post);
-    }
-    catch (e) {
-        res.status(((_d = e.output) === null || _d === void 0 ? void 0 : _d.statusCode) || 400).send({ Error: e.message });
-    }
+    const post = yield postlib.deletePost(req.user, req.params.id);
+    res.status(200).send(post);
 });
 exports.deletePost = deletePost;
 const likePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _e;
-    try {
-        const post = yield postlib.likePost(req.user, req.params.id);
-        res.status(200).send(post);
-    }
-    catch (e) {
-        res.status(((_e = e.output) === null || _e === void 0 ? void 0 : _e.statusCode) || 400).send({ Error: e.message });
-    }
+    const post = yield postlib.likePost(req.user, req.params.id);
+    res.status(200).send(post);
 });
 exports.likePost = likePost;
+const unlikePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield postlib.unlikePost(req.user, req.params.id);
+    res.status(200).send(post);
+});
+exports.unlikePost = unlikePost;
+const commentOnPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield postlib.commentOnPost(req.user, req.params.id, req.body);
+    res.status(200).send(post);
+});
+exports.commentOnPost = commentOnPost;
+const replyToComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield postlib.replyToComments(req.user, req.params.id, req.params.commentId, req.body);
+    res.status(200).send(post);
+});
+exports.replyToComment = replyToComment;

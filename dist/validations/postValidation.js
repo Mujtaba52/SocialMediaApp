@@ -9,7 +9,7 @@ const createPost = joi_1.default.object({
     description: joi_1.default.string().min(1).required()
 });
 const createPostValidator = (req, res, next) => {
-    const { error, value } = createPost.validate(req.body);
+    const { error } = createPost.validate(req.body);
     if (error)
         return res.status(401).send(error.details);
     next();

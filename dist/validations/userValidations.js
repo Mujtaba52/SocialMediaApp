@@ -17,14 +17,14 @@ const userSignin = joi_1.default.object({
     password: joi_1.default.string().min(3).required()
 });
 const SignUpValidator = (req, res, next) => {
-    const { error, value } = userSignup.validate(req.body, { abortEarly: false });
+    const { error } = userSignup.validate(req.body, { abortEarly: false });
     if (error)
         return res.status(401).send(error.details);
     next();
 };
 exports.SignUpValidator = SignUpValidator;
 const SignInValidator = (req, res, next) => {
-    const { error, value } = userSignin.validate(req.body, { abortEarly: false });
+    const { error } = userSignin.validate(req.body, { abortEarly: false });
     if (error)
         return res.status(401).send(error.details);
     next();

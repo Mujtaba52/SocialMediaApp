@@ -39,55 +39,55 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const userRouter = __importStar(require("./routes/user"));
 const postRouter = __importStar(require("./routes/post"));
-const http = __importStar(require("http"));
 const path = __importStar(require("path"));
 const dotenv = __importStar(require("dotenv"));
+const auth_1 = require("./middleware/auth");
+const body_parser_1 = __importDefault(require("body-parser"));
+const socket_io_1 = require("socket.io");
+const http_1 = require("http");
+const error_middleware_1 = __importDefault(require("./middleware/error.middleware"));
 dotenv.config();
-let bodyParser = require('body-parser');
 const app = (0, express_1.default)();
-const server = http.createServer(app);
-const socketio = require('socket.io');
-const { MongoClient } = require("mongodb");
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://Mujhassan786:connect4@mycluster.fvgee7z.mongodb.net/socialMediaApp?retryWrites=true&w=majority';
-const io = socketio(server);
+const MONGODB_URI = process.env.MONGODB_URI;
+const httpServer = (0, http_1.createServer)(app);
+const io = new socket_io_1.Server(httpServer);
 io.on('connection', (socket) => {
-    console.log("New Websocket Connection");
+    console.log('New Websocket Connection');
     // socket.emit()    //this only emit to a particular client
     // io.emit()        //this emits to all the clients
-    //socket.broadcast.emit()   //this emits to all the user except for the current connected one
+    // socket.broadcast.emit()   //this emits to all the user except for the current connected one
 });
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield mongoose_1.default.connect(MONGODB_URI);
             const connection = mongoose_1.default.connection;
-            const { db } = mongoose_1.default.connection;
             const posts = connection.collection('posts');
-            // open a Change Stream on the "messages" collection
             const changeStream = posts.watch();
-            // set up a listener when change events are emitted
-            changeStream.on("change", (next) => {
-                // process any change event
+            changeStream.on('change', (next) => {
                 switch (next.operationType) {
                     case 'insert':
-                        io.emit('newPost', posts);
+                        io.emit('newPost');
                         break;
                     case 'update':
-                        io.emit('feedUpdate', posts);
+                        io.emit('feedUpdate');
+                        break;
+                    default:
+                        break;
                 }
             });
         }
         catch (_a) {
-            // Ensures that the client will close when you error
-            //await client.close();
+            // await client.close();
         }
     });
 }
 run().catch(console.dir);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/user', userRouter.router);
-app.use(postRouter.router);
+app.use(body_parser_1.default.json());
+app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.use('/v1/users', userRouter.router);
+app.use('/v1/posts', auth_1.auth, postRouter.router);
+app.use(error_middleware_1.default);
 const publicDirectoryPath = path.join(__dirname, 'public');
 app.use(express_1.default.static(publicDirectoryPath));
-server.listen(4000 || process.env.PORT);
+httpServer.listen(4000 || process.env.PORT);

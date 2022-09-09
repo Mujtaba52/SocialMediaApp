@@ -28,18 +28,16 @@ const express = __importStar(require("express"));
 const user_1 = require("../controllers/user");
 const userValidations_1 = require("../validations/userValidations");
 const auth_1 = require("../middleware/auth");
+const index_1 = require("../helper/index");
 const router = express.Router();
 exports.router = router;
-router.post('/signup', userValidations_1.SignUpValidator, user_1.signUp);
-router.post('/signIn', userValidations_1.SignInValidator, user_1.signIn);
-router.post('/signOut', auth_1.auth, user_1.signOut);
-router.post('/signOutAll', auth_1.auth, user_1.signOutAll);
-router.post('/followUnfollow/:id', auth_1.auth, user_1.followUnfollowUser);
-router.post('/goPremium', auth_1.auth, user_1.goPremium);
-router.patch('/edit', auth_1.auth, user_1.editUser);
-router.delete('/delete', auth_1.auth, user_1.deleteUser);
-// Build a Social network backend for users to connect and share posts. 
-// A user should be able to sign up and follow/unfollow other users. 
-// A feed will show all the posts by users we follow.
-//  Additionally the feed can be hidden behind a paywall and integrated with stripe to create a subscription or a one time payment option. 
-//  Another layer of users could be added to moderate the content on the network.
+router.post('/sign_up', userValidations_1.SignUpValidator, (0, index_1.asyncHandler)(user_1.signUp));
+router.post('/sign_in', userValidations_1.SignInValidator, (0, index_1.asyncHandler)(user_1.signIn));
+router.use(auth_1.auth);
+router.post('/sign_out', (0, index_1.asyncHandler)(user_1.signOut));
+router.post('/sign_out_all', (0, index_1.asyncHandler)(user_1.signOutAll));
+router.post('/:id/follow', (0, index_1.asyncHandler)(user_1.followUser));
+router.post('/:id/unfollow', (0, index_1.asyncHandler)(user_1.unfollowUser));
+router.post('/go_premium', (0, index_1.asyncHandler)(user_1.goPremium));
+router.patch('/', (0, index_1.asyncHandler)(user_1.editUser));
+router.delete('/', (0, index_1.asyncHandler)(user_1.deleteUser));
