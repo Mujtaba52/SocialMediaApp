@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.replyToComments = exports.commentOnPost = exports.unlikePost = exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
+exports.getPosts = exports.replyToComments = exports.commentOnPost = exports.unlikePost = exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
 const models_1 = require("../models");
 const boom_1 = __importDefault(require("@hapi/boom"));
 const createPost = (postData, UserId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,6 +21,11 @@ const createPost = (postData, UserId) => __awaiter(void 0, void 0, void 0, funct
     return myPost;
 });
 exports.createPost = createPost;
+const getPosts = (UserId) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield models_1.Post.find({ postedBy: UserId });
+    return post;
+});
+exports.getPosts = getPosts;
 const sharePost = (currentUser, PostId, postData) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield models_1.Post.findById(PostId);
     if (!post)

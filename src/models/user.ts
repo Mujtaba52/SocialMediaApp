@@ -19,7 +19,7 @@ interface IUser {
   following?: Types.ObjectId[];
   followers?: Types.ObjectId[];
   userRole: string;
-  tokens?: string;
+  tokens: Array<{ token: string; }>;
   generateWebToken?: any;
 }
 

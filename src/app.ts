@@ -63,3 +63,4 @@ app.use(errorMiddleware)
 const publicDirectoryPath = path.join(__dirname, 'public')
 app.use(express.static(publicDirectoryPath))
 httpServer.listen(4000 || process.env.PORT)
+export { app }

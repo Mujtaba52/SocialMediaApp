@@ -31,6 +31,7 @@ const postValidation_1 = require("../validations/postValidation");
 const router = express.Router();
 exports.router = router;
 router.post('', postValidation_1.createPostValidator, (0, helper_1.asyncHandler)(post_1.createPost));
+router.get('', (0, helper_1.asyncHandler)(post_1.getPosts));
 router.post('/:id/share', (0, helper_1.asyncHandler)(post_1.sharePost));
 router.get('/feed', (0, helper_1.asyncHandler)(post_1.getUserFeed));
 router.put('/:id', (0, helper_1.asyncHandler)(post_1.editPost));
