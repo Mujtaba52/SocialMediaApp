@@ -17,7 +17,7 @@ const sharePost = async(currentUser: any, PostId: String, postData: any) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
   const sharedpost = new Post({ description: postData.description, postedBy: currentUser._id, parent: PostId })
-  post.sharedBy.unshift(currentUser._id)
+  post.sharedBy?.unshift(currentUser._id)
   return sharedpost.save()
 }
 
@@ -70,8 +70,8 @@ const deletePost = async(currentUser: any, PostId: String) => {
 const likePost = async(currentUser: any, PostId: String) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
-  if (!post.likes.includes(currentUser._id)) {
-    post.likes.unshift(currentUser._id)
+  if (!post.likes?.includes(currentUser._id)) {
+    post.likes?.unshift(currentUser._id)
     return post.save()
   }
   throw boom.notAcceptable('Post already liked')
@@ -80,7 +80,7 @@ const likePost = async(currentUser: any, PostId: String) => {
 const unlikePost = async(currentUser: any, PostId: String) => {
   const post = await Post.findById(PostId)
   if (!post) throw boom.notFound('Post Not found')
-  if (post.likes.includes(currentUser._id)) {
+  if (post.likes?.includes(currentUser._id)) {
     post.likes = post.likes.filter((id: any) => {
       return id.toString() !== currentUser._id.toString()
     })

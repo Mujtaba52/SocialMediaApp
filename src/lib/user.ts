@@ -1,7 +1,11 @@
 import { User } from '../models/user'
 import bcrypt from 'bcrypt'
 import * as boom from '@hapi/boom'
+import Redis from 'ioredis'
+const redis = new Redis()
 
+const DEFAULT_EXPIRATION = 60
+const maxNumberOfFailedLogins = 3
 const signUp = async(userAttributes: any) => {
   const userExists = await User.findOne({ email: userAttributes.email })
   if (userExists) {
@@ -14,11 +18,17 @@ const signUp = async(userAttributes: any) => {
 
 const SignIn = async(userCredentials: any) => {
   const myUser = await User.findOne({ email: userCredentials.email })// .select('-tokens');
+  let userAttempts: any = await redis.get(userCredentials.email) ?? 0
+  if ((userAttempts ?? 0) > maxNumberOfFailedLogins) {
+    throw boom.tooManyRequests('Too many incorrect attempts, try again one minute later')
+  }
+
   if (!myUser) {
     throw boom.unauthorized('Invalid Email or Password')
   }
   const isMatch = await bcrypt.compare(userCredentials.password, myUser.password)
   if (!isMatch) {
+    await redis.setex(userCredentials.email, DEFAULT_EXPIRATION, ++userAttempts)
     throw boom.unauthorized('Invalid Email or Password')
   }
   const token = await myUser.generateWebToken()

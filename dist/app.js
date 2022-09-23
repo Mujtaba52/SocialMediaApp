@@ -51,30 +51,31 @@ const app = (0, express_1.default)();
 const MONGODB_URI = process.env.MONGODB_URI;
 const httpServer = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(httpServer);
-io.on('connection', (socket) => {
-    console.log('New Websocket Connection');
-    // socket.emit()    //this only emit to a particular client
-    // io.emit()        //this emits to all the clients
-    // socket.broadcast.emit()   //this emits to all the user except for the current connected one
-});
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield mongoose_1.default.connect(MONGODB_URI);
             const connection = mongoose_1.default.connection;
             const posts = connection.collection('posts');
-            const changeStream = posts.watch();
-            changeStream.on('change', (next) => {
-                switch (next.operationType) {
-                    case 'insert':
-                        io.emit('newPost');
-                        break;
-                    case 'update':
-                        io.emit('feedUpdate');
-                        break;
-                    default:
-                        break;
-                }
+            io.on('connection', (socket) => {
+                console.log('New Websocket Connection' + socket.id);
+                // io.emit('Added', 'userAdded')
+                // socket.emit()    //this only emit to a particular client
+                // io.emit()        //this emits to all the clients
+                // socket.broadcast.emit()   //this emits to all the user except for the current connected one
+                const changeStream = posts.watch();
+                changeStream.on('change', (next) => {
+                    switch (next.operationType) {
+                        case 'insert':
+                            io.emit('update', 'New Post Added');
+                            break;
+                        case 'update':
+                            io.emit('update', 'Post Updated');
+                            break;
+                        default:
+                            break;
+                    }
+                });
             });
         }
         catch (_a) {
@@ -83,8 +84,12 @@ function run() {
     });
 }
 run().catch(console.dir);
+app.set('view engine', 'ejs');
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
+app.get('/home', (req, res) => {
+    res.render('home.ejs');
+});
 app.use('/v1/users', userRouter.router);
 app.use('/v1/posts', auth_1.auth, postRouter.router);
 app.use(error_middleware_1.default);

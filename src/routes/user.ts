@@ -3,11 +3,12 @@ import { signUp, signIn, signOut, signOutAll, followUser, unfollowUser, goPremiu
 import { SignInValidator, SignUpValidator } from '../validations/userValidations'
 import { auth } from '../middleware/auth'
 import { asyncHandler } from '../helper/index'
+import { limiter } from '../middleware/ratelimiter'
 const router = express.Router()
 
 router.post('/sign_up', SignUpValidator, asyncHandler(signUp))
 
-router.post('/sign_in', SignInValidator, asyncHandler(signIn))
+router.post('/sign_in', SignInValidator, limiter, asyncHandler(signIn))
 
 router.use(auth)
 

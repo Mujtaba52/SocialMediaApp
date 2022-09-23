@@ -32,13 +32,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.replyToComment = exports.commentOnPost = exports.unlikePost = exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
+exports.getPosts = exports.replyToComment = exports.commentOnPost = exports.unlikePost = exports.likePost = exports.editPost = exports.deletePost = exports.getUserFeed = exports.sharePost = exports.createPost = void 0;
 const postlib = __importStar(require("../lib/post"));
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postlib.createPost(req.body, req.user._id);
     res.status(200).send(post);
 });
 exports.createPost = createPost;
+const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield postlib.getPosts(req.user._id);
+    res.status(200).send(post);
+});
+exports.getPosts = getPosts;
 const sharePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postlib.sharePost(req.user, req.params.id, req.body);
     res.status(200).send(post);

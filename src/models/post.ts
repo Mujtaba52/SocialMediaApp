@@ -4,9 +4,9 @@ import mongooseAutoPopulate from 'mongoose-autopopulate'
 interface IPost {
   _id?: Types.ObjectId;
   description: string;
-  likes: Types.ObjectId[];
+  likes?: Types.ObjectId[];
   postedBy?: Types.ObjectId;
-  sharedBy: Array<{user: Types.ObjectId, sharedAt?: Date}>;
+  sharedBy?: Array<{user: Types.ObjectId, sharedAt?: Date}>;
   parent?: Types.ObjectId;
   comments?: Types.ObjectId[]
 }
