@@ -9,9 +9,11 @@ import bodyParser from 'body-parser'
 import { Server, Socket } from 'socket.io'
 import { createServer } from 'http'
 import errorMiddleware from './middleware/error.middleware'
-
+import * as swaggerUI from 'swagger-ui-express'
+import YAML from 'yamljs'
 dotenv.config()
 const app = express()
+const swaggerJSDocs = YAML.load('src/swagger/api.yaml')
 
 const MONGODB_URI = <string>process.env.MONGODB_URI
 
@@ -59,6 +61,7 @@ app.get('/home', (req: express.Request, res: express.Response) => {
 })
 app.use('/v1/users', userRouter.router)
 app.use('/v1/posts', auth, postRouter.router)
+app.use('/v1/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJSDocs))
 app.use(errorMiddleware)
 const publicDirectoryPath = path.join(__dirname, 'public')
 app.use(express.static(publicDirectoryPath))

@@ -1,0 +1,122 @@
+openapi: '3.0.0'
+info:
+  title: Social Networking app Api
+  description: Social Networking app Api description
+  version: 1.0
+  contact:
+    email: mujhassan786@gmail.com
+  servers:
+    -url: http://localhost:4000
+    description: THis is my local Server
+    -url: http://example.com/
+    description: This is my original URL
+  apis: ['./src/routes/*.ts']
+  
+tags:
+  name: Users
+  description: The users management API
+  name: Posts
+  description: The Posts management API
+
+components:
+  schemas:
+    user:
+      type: object
+      required:
+      - name
+      - email
+      - password
+      properties:
+        _id:
+          type: string
+          description: Auto generated id of the user
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        following:
+          type: Types.ObjectId[]
+        followers:
+          type: Types.ObjectId[]
+        userRole:
+          type: string
+        tokens:
+          type: Array
+        generateWebToken:
+          type: any
+      example:
+        _id: 632d93f4d3b3252c967e3317
+        name: jon2
+        email: jon2@gmail.com
+        userRole: Member
+        following: []
+        followers: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
+  security:
+   - bearerAuth: []  
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+
+paths:
+  /v1/users/sign_up:
+    post:
+      description: Sign up for the app
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              example: {name: 'Tester', email: Tester@testing.com, password: '12345'}
+      responses:
+        '200':
+          description: The user was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        '409':
+            description: This user already exists
+
+
+  /v1/users/sign_in:
+    post:
+      description: Sign in to the app
+      tags: [Users]
+      requestBody:
+        required: true
+        content:
+            application/json:
+                schema:
+                    type: object
+                    example: {email: Tester@testing.com, password: '12345'}
+      responses:
+        '200':
+            description: The user signed In successfully
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/user'
+
+  /v1/posts:
+    get:
+      description: Get User Posts
+      tags: [Posts]
+      responses:
+        '200':
+            description: List of posts created by the user
+            schema: 
+            type: array
+        '401':
+            $ref: '#/components/responses/UnauthorizedError'
+      security:
+        - bearerAuth: []
+
