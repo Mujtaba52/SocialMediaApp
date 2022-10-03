@@ -21,6 +21,27 @@ const signIn = async(req: Request, res: Response) => {
   res.status(200).send({ myUser, token })
 }
 
+const authenticateUser = async(req: Request, res: Response) => {
+  const token = req.params.token
+  const user = await userlib.authenticateUser(token)
+  res.status(200).send({
+    User: { status: 'User Verified', Detail: { user } }
+  })
+}
+
+const forgotPassword = async(req: Request, res: Response) => {
+  const email = req.body.email
+  const status = await userlib.forgotPassword(email)
+  res.status(200).send({ status })
+}
+
+const updatePassword = async(req: Request, res: Response) => {
+  const password = req.body.password
+  const token = req.params.token
+  const status = await userlib.updatePassword(password, token)
+  res.status(200).send({ status })
+}
+
 const signOut = async(req: IGetUserAuthInfoRequest, res: Response) => {
   req.user.tokens = await userlib.signOut(req.user.tokens, req.token)
   await req.user.save()
@@ -70,4 +91,8 @@ const deleteUser = async(req: IGetUserAuthInfoRequest, res: Response) => {
   res.status(200).send(user)
 }
 
-export { signUp, signIn, signOut, signOutAll, followUser, unfollowUser, goPremium, editUser, deleteUser }
+export {
+  signUp, signIn, signOut, signOutAll, followUser,
+  unfollowUser, goPremium, editUser, deleteUser,
+  authenticateUser, forgotPassword, updatePassword
+}

@@ -1,5 +1,9 @@
 import * as express from 'express'
-import { signUp, signIn, signOut, signOutAll, followUser, unfollowUser, goPremium, editUser, deleteUser } from '../controllers/user'
+import {
+  signUp, signIn, signOut, signOutAll, followUser,
+  unfollowUser, goPremium, editUser, deleteUser,
+  authenticateUser, forgotPassword, updatePassword
+} from '../controllers/user'
 import { SignInValidator, SignUpValidator } from '../validations/userValidations'
 import { auth } from '../middleware/auth'
 import { asyncHandler } from '../helper/index'
@@ -9,6 +13,12 @@ const router = express.Router()
 router.post('/sign_up', SignUpValidator, asyncHandler(signUp))
 
 router.post('/sign_in', SignInValidator, limiter, asyncHandler(signIn))
+
+router.get('/authenticate/:token', asyncHandler(authenticateUser))
+
+router.post('/forgot_password', asyncHandler(forgotPassword))
+
+router.post('/update_password/:token', asyncHandler(updatePassword))
 
 router.use(auth)
 

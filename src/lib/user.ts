@@ -1,7 +1,10 @@
 import { User } from '../models/user'
 import bcrypt from 'bcrypt'
 import * as boom from '@hapi/boom'
+import { transporter } from '../config/nodemailer'
+import * as jwt from 'jsonwebtoken'
 import Redis from 'ioredis'
+import { isStringObject } from 'util/types'
 const redis = new Redis()
 
 const DEFAULT_EXPIRATION = 60
@@ -13,6 +16,19 @@ const signUp = async(userAttributes: any) => {
   }
   const user = new User(userAttributes)
   const newUser = await user.save()
+  if (!process.env.ACCOUNT_AUTH_SECRET_KEY) {
+    throw boom.notFound('Account authentication key missing')
+  }
+  const token = jwt.sign({ email: userAttributes.email }, process.env.ACCOUNT_AUTH_SECRET_KEY, { expiresIn: '30m' })
+  transporter.sendMail({
+    to: userAttributes.email,
+    from: 'mujhassan786@outlook.com',
+    subject: 'Account Authentication',
+    html: `<!DOCTYPE html>
+    <html>
+       Click on the following link to authenticate your account creation: http://localhost:4000/v1/users/authenticate/${token}
+    </html>`
+  })
   return newUser
 }
 
@@ -35,6 +51,20 @@ const SignIn = async(userCredentials: any) => {
   return { myUser, token }
 }
 
+const authenticateUser = async(token: string) => {
+  if (!process.env.ACCOUNT_AUTH_SECRET_KEY) {
+    throw boom.notFound('Error Email Authentication token missing')
+  }
+  const userEmail = jwt.verify(token, process.env.ACCOUNT_AUTH_SECRET_KEY)
+  if (!userEmail) {
+    throw boom.conflict('Invalid verification link')
+  }
+  if (!isStringObject(userEmail)) {
+    const userExists = await User.findOne({ email: userEmail.email })
+    return userExists
+  }
+}
+
 const signOut = async(tokens: any, currentAccountToken: any) => {
   const Updatedtokens = tokens.filter((token: any) => {
     return token.token !== currentAccountToken
@@ -42,6 +72,39 @@ const signOut = async(tokens: any, currentAccountToken: any) => {
   return Updatedtokens
 }
 
+const forgotPassword = async(email: string) => {
+  const user = await User.findOne({ email })
+  if (!user) {
+    throw boom.notFound('User not found')
+  }
+  if (!process.env.ACCOUNT_AUTH_SECRET_KEY) {
+    throw boom.notFound('Account authentication key missing')
+  }
+  const token = jwt.sign({ email }, process.env.ACCOUNT_AUTH_SECRET_KEY, { expiresIn: '30m' })
+  transporter.sendMail({
+    to: email,
+    from: 'mujhassan786@outlook.com',
+    subject: 'Password Updation',
+    html: `<!DOCTYPE html>
+    <html>
+       Click on the following link to update your password: http://localhost:4000/v1/users/update_password/${token}
+    </html>`
+  })
+  return 'Password updation email sent'
+}
+
+const updatePassword = async(password: string, token: any) => {
+  console.log('hello')
+  if (!process.env.ACCOUNT_AUTH_SECRET_KEY) {
+    throw boom.notFound('Account authentication key missing')
+  }
+  const userExists = jwt.verify(token, process.env.ACCOUNT_AUTH_SECRET_KEY)
+  if (!isStringObject(userExists)) {
+    const updatedUser = await User.findOneAndUpdate({ email: userExists.email }, { password: await bcrypt.hash(password, 8) })
+    await updatedUser?.save()
+    return 'Password Updated successfully'
+  }
+}
 const signOutAll = () => {
   return []
 }
@@ -86,4 +149,8 @@ const deleteUser = async(currentUser: any) => {
   return { status: 'User successfully deleted' }
 }
 
-export { signUp, SignIn, signOut, signOutAll, followUser, deleteUser, editUser, unfollowUser }
+export {
+  signUp, SignIn, signOut, signOutAll,
+  followUser, deleteUser, editUser, unfollowUser,
+  authenticateUser, forgotPassword, updatePassword
+}
