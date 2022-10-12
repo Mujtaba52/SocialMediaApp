@@ -1,50 +1,35 @@
 import mongoose, { Schema, model, Types } from 'mongoose'
-import mongooseAutoPopulate from 'mongoose-autopopulate'
+// import mongooseAutoPopulate from 'mongoose-autopopulate'
+
+enum postType{
+  CREATED = 'Created',
+  SHARED = 'Shared'
+}
 
 interface IPost {
   _id?: Types.ObjectId;
   description: string;
-  likes?: Types.ObjectId[];
   postedBy?: Types.ObjectId;
-  sharedBy?: Array<{user: Types.ObjectId, sharedAt?: Date}>;
+  postType?: postType;
   parent?: Types.ObjectId;
-  comments?: Types.ObjectId[]
 }
 
-const postSchema: Schema<IPost> = new Schema({
+const postSchema: Schema = new Schema({
 
   description: {
     type: String,
     required: true
   },
-  likes: [{
-    type: mongoose.Types.ObjectId,
-    required: true,
-    ref: 'user'
-  }],
   postedBy: {
     type: mongoose.Types.ObjectId,
     required: true,
     ref: 'user'
   },
-  sharedBy: [{
-    _id: false,
-    sharedAt: {
-      type: Date,
-      default: new Date()
-    },
-    user: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-      ref: 'user'
-    }
-  }],
-  comments: [{
-    type: mongoose.Types.ObjectId,
+  postType: {
+    type: String,
     required: true,
-    ref: 'comment',
-    autopopulate: true
-  }],
+    default: postType.CREATED
+  },
   parent: {
     type: mongoose.Types.ObjectId,
     default: null,
@@ -54,8 +39,7 @@ const postSchema: Schema<IPost> = new Schema({
   timestamps: true
 })
 
-postSchema.plugin(mongooseAutoPopulate)
+// postSchema.plugin(mongooseAutoPopulate)
+const Post = model<IPost>('post', postSchema)
 
-const Post = model('post', postSchema)
-
-export { Post, IPost }
+export { Post, IPost, postType }

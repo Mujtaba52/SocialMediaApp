@@ -1,3 +1,6 @@
 export * from './user'
 export * from './comments'
 export * from './post'
+export * from './following'
+export * from './likes'
+export * from './commentLikeCount'

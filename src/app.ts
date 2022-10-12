@@ -13,9 +13,9 @@ import * as swaggerUI from 'swagger-ui-express'
 import YAML from 'yamljs'
 dotenv.config()
 const app = express()
-const swaggerJSDocs = YAML.load('src/swagger/api.yaml')
+const swaggerJSDocs = YAML.load('src/config/swagger/api.yaml')
 
-const MONGODB_URI = <string>process.env.MONGODB_URI
+const MONGODB_URI = <string>process.env.MONGODB_URI2
 
 const httpServer = createServer(app)
 const io = new Server(httpServer)

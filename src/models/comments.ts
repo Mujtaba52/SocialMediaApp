@@ -1,24 +1,28 @@
 import mongoose, { model, Types } from 'mongoose'
-import mongooseAutoPopulate from 'mongoose-autopopulate'
-
+// import mongooseAutoPopulate from 'mongoose-autopopulate'
+enum commentType{
+  COMMENT = 'comment',
+  REPLY = 'reply'
+}
+enum commentParent{
+  COMMENT = 'comment',
+  POST = 'post'
+}
 interface IComments {
-  _id?: Types.ObjectId,
-  text: string,
-  likes?: Types.ObjectId[],
-  tag?: Types.ObjectId[],
-  postedBy?: Types.ObjectId,
-  replies?: Types.ObjectId[]
+  _id?: Types.ObjectId;
+  text: string;
+  tag?: Types.ObjectId[];
+  postedBy?: Types.ObjectId;
+  parent: string;
+  commentType: commentType;
+  parentId: Types.ObjectId;
 }
 
-const commentSchema: mongoose.Schema<IComments> = new mongoose.Schema({
+const commentSchema: mongoose.Schema = new mongoose.Schema({
   text: {
     type: String,
     required: true
   },
-  likes: [{
-    type: mongoose.Types.ObjectId,
-    ref: 'user'
-  }],
   tag: [{
     type: mongoose.Types.ObjectId,
     ref: 'user'
@@ -28,16 +32,27 @@ const commentSchema: mongoose.Schema<IComments> = new mongoose.Schema({
     required: true,
     ref: 'user'
   },
-  replies: [{
+  parentId: {
     type: mongoose.Types.ObjectId,
-    ref: 'comment',
-    autopopulate: true
-  }]
+    refPath: 'parent'
+  },
+  parent: {
+    type: String,
+    required: true,
+    enum: ['comment', 'post']
+  },
+  commentType: {
+    type: String,
+    required: true
+  }
+},
+{
+  timestamps: true
 })
 // subTitles: [{ type: Schema.ObjectId, ref: 'workstructureSchema (dont know how you called it)' }],
 
-commentSchema.plugin(mongooseAutoPopulate)
+// commentSchema.plugin(mongooseAutoPopulate)
 
-const Comment = model('comment', commentSchema)
+const Comment = model<IComments>('comment', commentSchema)
 
-export { commentSchema, IComments, Comment }
+export { commentSchema, IComments, Comment, commentType, commentParent }

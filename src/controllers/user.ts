@@ -62,8 +62,17 @@ const followUser = async(req: IGetUserAuthInfoRequest, res: Response) => {
 
 const unfollowUser = async(req: IGetUserAuthInfoRequest, res: Response) => {
   const user = await userlib.unfollowUser(req.user, req.params.id)
-  const updateduser = await user.save()
-  res.status(200).send(updateduser)
+  res.status(200).send(user)
+}
+
+const getFollowers = async(req: IGetUserAuthInfoRequest, res: Response) => {
+  const users = await userlib.getFollowers(req.user)
+  res.status(200).send(users)
+}
+
+const getFollowing = async(req: IGetUserAuthInfoRequest, res: Response) => {
+  const users = await userlib.getFollowing(req.user)
+  res.status(200).send(users)
 }
 
 const goPremium = async(req: IGetUserAuthInfoRequest, res: Response) => {
@@ -94,5 +103,6 @@ const deleteUser = async(req: IGetUserAuthInfoRequest, res: Response) => {
 export {
   signUp, signIn, signOut, signOutAll, followUser,
   unfollowUser, goPremium, editUser, deleteUser,
-  authenticateUser, forgotPassword, updatePassword
+  authenticateUser, forgotPassword, updatePassword,
+  getFollowers, getFollowing
 }

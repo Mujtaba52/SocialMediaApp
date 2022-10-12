@@ -16,8 +16,6 @@ interface IUser {
   name: string;
   email: string;
   password: string;
-  following?: Types.ObjectId[];
-  followers?: Types.ObjectId[];
   userRole: string;
   tokens: Array<{ token: string; }>;
   generateWebToken?: any;
@@ -39,14 +37,6 @@ const userSchema = new Schema<IUser>({
     trim: true,
     required: true
   },
-  following: [{
-    type: Types.ObjectId,
-    default: []
-  }],
-  followers: [{
-    type: Types.ObjectId,
-    default: []
-  }],
   userRole: {
     type: String,
     enum: role,
@@ -84,12 +74,6 @@ userSchema.virtual('post', {
   foreignField: 'postedBy'
 })
 
-userSchema.virtual('post', {
-  ref: 'post',
-  localField: '_id',
-  foreignField: 'sharedBy'
-})
-
 userSchema.methods.toJSON = function() {
   const userObj = this.toObject()
   delete userObj.password
@@ -102,6 +86,6 @@ userSchema.methods.toJSON = function() {
 userSchema.set('toObject', { virtuals: true })
 userSchema.set('toJSON', { virtuals: true })
 
-const User = model('user', userSchema)
+const User = model<IUser>('user', userSchema)
 
 export { User, IUser, role }

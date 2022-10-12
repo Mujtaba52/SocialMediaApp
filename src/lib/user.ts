@@ -1,10 +1,12 @@
 import { User } from '../models/user'
+import { Following } from '../models'
 import bcrypt from 'bcrypt'
 import * as boom from '@hapi/boom'
 import { transporter } from '../config/nodemailer'
 import * as jwt from 'jsonwebtoken'
 import Redis from 'ioredis'
 import { isStringObject } from 'util/types'
+import * as ejs from 'ejs'
 const redis = new Redis()
 
 const DEFAULT_EXPIRATION = 60
@@ -20,14 +22,13 @@ const signUp = async(userAttributes: any) => {
     throw boom.notFound('Account authentication key missing')
   }
   const token = jwt.sign({ email: userAttributes.email }, process.env.ACCOUNT_AUTH_SECRET_KEY, { expiresIn: '30m' })
+  const emailTemplate = await ejs.renderFile('views/authentication/authEmail.ejs'
+    , { user_firstname: userAttributes.name, confirm_link: `http://localhost:4000/v1/users/authenticate/${token}`, token })
   transporter.sendMail({
     to: userAttributes.email,
     from: 'mujhassan786@outlook.com',
     subject: 'Account Authentication',
-    html: `<!DOCTYPE html>
-    <html>
-       Click on the following link to authenticate your account creation: http://localhost:4000/v1/users/authenticate/${token}
-    </html>`
+    html: emailTemplate
   })
   return newUser
 }
@@ -109,34 +110,51 @@ const signOutAll = () => {
   return []
 }
 
-const followUser = async(currentUser: any, UserToFollowUnfollow: String) => {
-  const user = await User.findById(UserToFollowUnfollow)
+const followUser = async(currentUser: any, UserToFollow: String) => {
+  const user = await User.findById(UserToFollow)
   if (!user) throw boom.notFound('User Not found')
   if (user._id === currentUser._id) throw boom.notFound('You cannot follow yourself')
-  if (!currentUser.following.includes(user._id)) {
-    user.followers?.unshift(currentUser._id)
-    currentUser.following.unshift(UserToFollowUnfollow)
-    await user.save()
-    return currentUser
+  const usersBeingFollowed = await Following.find({ $and: [{ follower: currentUser._id }, { followee: UserToFollow }] })
+  if (usersBeingFollowed.length >= 1) {
+    throw boom.badRequest('User already followed')
   }
-  throw boom.badRequest('User already followed')
+  const newfollowing = new Following({ follower: currentUser._id, followee: UserToFollow })
+  return newfollowing.save()
 }
 
-const unfollowUser = async(currentUser: any, UserToFollowUnfollow: String) => {
-  const user = await User.findById(UserToFollowUnfollow)
+const unfollowUser = async(currentUser: any, UserToUnfollow: String) => {
+  const user = await User.findById(UserToUnfollow)
   if (!user) throw boom.notFound('User Not found')
   if (user._id === currentUser._id) throw boom.notFound('You cannot follow yourself')
-  if (currentUser.following.includes(user._id)) {
-    currentUser.following = currentUser.following.filter((id: any) => {
-      return id.toString() !== user._id.toString()
-    })
-    user.followers = user.followers?.filter((id: any) => {
-      return id.toString() !== currentUser._id.toString()
-    })
-    await user.save()
-    return currentUser
+  const usersBeingFollowed = await Following.find({ $and: [{ follower: currentUser._id }, { followee: UserToUnfollow }] })
+  if (usersBeingFollowed.length <= 0) {
+    throw boom.badRequest('User not being followed')
   }
-  throw boom.badRequest('User not being followed')
+  return Following.findOneAndDelete({ followee: UserToUnfollow })
+}
+
+const getFollowers = async(currentUser: any) => {
+  const followersData = await Following.find({ followee: currentUser._id })
+  return User.find({
+    _id: {
+      $in: followersData.map((val) => {
+        return val.follower
+      })
+    }
+  })
+  // return followers
+}
+
+const getFollowing = async(currentUser: any) => {
+  const followeesData = await Following.find({ follower: currentUser._id })
+  return User.find({
+    _id: {
+      $in: followeesData.map((val) => {
+        return val.followee
+      })
+    }
+  })
+  // return followees
 }
 
 const editUser = async(currentUser: any, editInfo: any) => {
@@ -152,5 +170,6 @@ const deleteUser = async(currentUser: any) => {
 export {
   signUp, SignIn, signOut, signOutAll,
   followUser, deleteUser, editUser, unfollowUser,
-  authenticateUser, forgotPassword, updatePassword
+  authenticateUser, forgotPassword, updatePassword,
+  getFollowers, getFollowing
 }

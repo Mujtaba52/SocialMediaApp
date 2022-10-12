@@ -2,7 +2,8 @@ import * as express from 'express'
 import {
   signUp, signIn, signOut, signOutAll, followUser,
   unfollowUser, goPremium, editUser, deleteUser,
-  authenticateUser, forgotPassword, updatePassword
+  authenticateUser, forgotPassword, updatePassword,
+  getFollowing, getFollowers
 } from '../controllers/user'
 import { SignInValidator, SignUpValidator } from '../validations/userValidations'
 import { auth } from '../middleware/auth'
@@ -27,6 +28,10 @@ router.post('/sign_out', asyncHandler(signOut))
 router.post('/sign_out_all', asyncHandler(signOutAll))
 
 router.post('/:id/follow', asyncHandler(followUser))
+
+router.get('/followers', asyncHandler(getFollowers))
+
+router.get('/following', asyncHandler(getFollowing))
 
 router.post('/:id/unfollow', asyncHandler(unfollowUser))
 
